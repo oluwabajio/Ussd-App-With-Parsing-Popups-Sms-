@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:ambientShadowAlpha">0.15</item>
+        <item name="android:spotShadowAlpha">0.2</item>
+    </style>
+</resources>
