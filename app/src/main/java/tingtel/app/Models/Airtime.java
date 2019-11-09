@@ -20,7 +20,9 @@ public class Airtime {
 
     Date date;
 
-    float AirtimeBalance;
+    float balance;
+
+    String type;
 
 
     public int getId() {
@@ -63,11 +65,19 @@ public class Airtime {
         this.date = date;
     }
 
-    public float getAirtimeBalance() {
-        return AirtimeBalance;
+    public float getBalance() {
+        return balance;
     }
 
-    public void setAirtimeBalance(float airtimeBalance) {
-        AirtimeBalance = airtimeBalance;
+    public void setBalance(float balance) {
+        this.balance = balance;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

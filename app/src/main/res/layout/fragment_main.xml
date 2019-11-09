@@ -73,6 +73,14 @@
                         android:text="Airtime Balance"
                         android:textColor="#000000"/>
 
+                    <ImageView
+                        android:id="@+id/ref_AirtimeSim1"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:src="@drawable/ic_refresh_page_option"/>
+
                     <TextView
                         android:id="@+id/tv_AirtimeSim1"
                         android:layout_width="wrap_content"
@@ -80,7 +88,7 @@
                         android:layout_marginTop="50dp"
                         android:textColor="#000000"
                         android:textSize="25dp"
-                        android:text="206.94 Naira"/>
+                        android:text="06.94 Naira"/>
 
 
                 </RelativeLayout>
@@ -108,6 +116,16 @@
                         android:text="Data Balance"
                         android:textColor="#000000"/>
 
+
+                    <ImageView
+                        android:id="@+id/ref_DataSim1"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:src="@drawable/ic_refresh_page_option"/>
+
+
                     <TextView
                         android:id="@+id/tv_DataSim1"
                         android:layout_width="wrap_content"
@@ -115,7 +133,7 @@
                         android:layout_marginTop="50dp"
                         android:textColor="#000000"
                         android:textSize="30dp"
-                        android:text="30.78 Mb"/>
+                        android:text="30.26 Mb"/>
 
 
 
@@ -184,6 +202,15 @@
                         android:text="Airtime Balance"
                         android:textColor="#000000"/>
 
+
+                    <ImageView
+                        android:id="@+id/ref_AirtimeSim2"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:src="@drawable/ic_refresh_page_option"/>
+
                     <TextView
                         android:id="@+id/tv_AirtimeSim2"
                         android:layout_width="wrap_content"
@@ -191,7 +218,7 @@
                         android:layout_marginTop="50dp"
                         android:textColor="#000000"
                         android:textSize="25dp"
-                        android:text="206.94 Naira"/>
+                        android:text="41.76 Naira"/>
 
 
                 </RelativeLayout>
@@ -219,6 +246,15 @@
                         android:text="Data Balance"
                         android:textColor="#000000"/>
 
+
+                    <ImageView
+                        android:id="@+id/ref_DataSim2"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:src="@drawable/ic_refresh_page_option"/>
+
                     <TextView
                         android:id="@+id/tv_DataSim2"
                         android:layout_width="wrap_content"
@@ -226,7 +262,7 @@
                         android:layout_marginTop="50dp"
                         android:textColor="#000000"
                         android:textSize="30dp"
-                        android:text="30.78 Mb"/>
+                        android:text="71.78 Mb"/>
 
 
                 </RelativeLayout>

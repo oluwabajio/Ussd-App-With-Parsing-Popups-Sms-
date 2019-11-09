@@ -1,8 +1,10 @@
 package tingtel.app.Services;
 
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.SmsMessage;
@@ -12,37 +14,33 @@ import tingtel.app.Methods.MyApplication;
 
 public class MessageReceiver extends BroadcastReceiver {
 
+    public static final String pdu_type = "pdus";
+
+    @TargetApi(Build.VERSION_CODES.M)
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Retrieves a map of extended data from the intent.
-        final Bundle bundle = intent.getExtras();
-
-        try {
-
-            if (bundle != null) {
-
-                final Object[] pdusObj = (Object[]) bundle.get("pdus");
-                String phoneNumber = "";
-
-                String messageBody = "";
-
-                final SmsMessage[] messages = new SmsMessage[pdusObj.length];
-
-                //sms are in pdus blocks, we need to join them together
-                for (int i = 0; i < pdusObj.length; i++) {
-
-                    messages[i] = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
-                    phoneNumber = messages[0].getDisplayOriginatingAddress();
-
-
-                } // end for loop
-
-
-                if (messages.length > -1) {
-                    for (int i = 0; i < pdusObj.length; i++) {
-                        messageBody += (messages[i].getDisplayMessageBody());
-                    }
+        // Get the SMS message.
+        Bundle bundle = intent.getExtras();
+        SmsMessage[] msgs;
+        String strMessage = "";
+        String format = bundle.getString("format");
+        // Retrieve the SMS message received.
+        Object[] pdus = (Object[]) bundle.get(pdu_type);
+        if (pdus != null) {
+            // Check the Android version.
+            boolean isVersionM =
+                    (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
+            // Fill the msgs array.
+            msgs = new SmsMessage[pdus.length];
+            for (int i = 0; i < msgs.length; i++) {
+                // Check Android version and use appropriate createFromPdu.
+                if (isVersionM) {
+                    // If Android version M or newer:
+                    msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i], format);
+                } else {
+                    // If Android version L or older:
+                    msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                 }
 
                 //check if app is in foreground or background
@@ -50,11 +48,13 @@ public class MessageReceiver extends BroadcastReceiver {
 
                 String Appstate = globalVariable.getAppstate();
 
-                if (Appstate.equalsIgnoreCase("background")){
+                if (Appstate.equalsIgnoreCase("background")) {
                     Log.e("logmessage", "App is in background, wont respond to sms");
                     return;
                 }
 
+                String phoneNumber = msgs[i].getOriginatingAddress();
+                String messageBody = msgs[i].getMessageBody();
 
                 Intent myIntent = new Intent("SmsMessage");
                 myIntent.putExtra("senderNum", phoneNumber);
@@ -64,8 +64,9 @@ public class MessageReceiver extends BroadcastReceiver {
 
             }
 
-        } catch (Exception e) {
-            Log.e("logmessage", "Exception smsReceiver" + e);
+//        } catch (Exception e) {
+//            Log.e("logmessage", "Exception smsReceiver" + e);
+//
 
         }
     }

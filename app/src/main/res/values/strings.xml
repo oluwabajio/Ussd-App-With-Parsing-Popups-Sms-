@@ -4,4 +4,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="accessibility_service_description">This priviledge grants Tingtel the ability to get your ussd response from popups and display it on the app. Enable
+    Tingtel accessibility service by tapping the toggle switch in the upper right corner.
+    Press the back button twice to return to Tingtel</string>
+    <string name="title_activity_show_message">ShowMessage</string>
+
 </resources>

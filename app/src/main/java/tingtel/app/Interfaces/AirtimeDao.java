@@ -32,8 +32,9 @@ public interface AirtimeDao {
 //    @Query("SELECT * FROM Airtime WHERE HistoryId = :HistoryId")
 //    public List<Airtime> getItemsById(String HistoryId);
 
-    @Query("SELECT * FROM Airtime WHERE SimUuid = :iccid  ORDER BY id DESC LIMIT 1")
-    public Airtime getLastAirtime(String iccid);
+    @Query("SELECT * FROM Airtime WHERE SimUuid = :iccid AND type = :type  ORDER BY id DESC LIMIT 1")
+    public Airtime getLastAirtimeOrData(String iccid, String type);
+
 
 
 }

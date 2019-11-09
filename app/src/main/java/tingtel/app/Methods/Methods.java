@@ -434,7 +434,7 @@ public class Methods {
 
 
 
-    private void getCarrierOfSim(Activity activity) {
+    public void getCarrierOfSim(Activity activity) {
 
         sharedPreferences = activity.getSharedPreferences("TingTelPref", 0);
         editor = sharedPreferences.edit();
@@ -455,14 +455,18 @@ public class Methods {
                     final String iccid = subscriptionInfo.getIccId();
                     final String subscriptionInfoNumber = subscriptionInfo.getNumber();
 
-                    if (mnc == 621) {
+                    Toast.makeText(activity, "" + mnc + mcc, Toast.LENGTH_SHORT).show();
+
+                    if (mcc == 621) {
                         carrierNameList.add(carrierName);
                         Simno += 1;
                         editor.putString("SIM" + Simno + "NAME", displayName.toString());
                         editor.putString("SIM" + Simno + "ICCID", iccid);
                         editor.putInt("Simno", Simno);
                         editor.commit();
+                        Toast.makeText(activity, "mnc is true" + Simno, Toast.LENGTH_SHORT).show();
                          }
+                    Toast.makeText(activity, "mnc is false", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -476,6 +480,8 @@ public class Methods {
                     editor.putString(SimStatus, "SIM1SIM2");
                 }
 
+
+                Toast.makeText(activity, "" + Simno, Toast.LENGTH_SHORT).show();
 
 
 
@@ -513,7 +519,7 @@ public class Methods {
 
 
 
-    public void SaveAirtime(final Context context, final int amount, final String simiccid, final String simName, final String message, final int banklogo){
+    public void SaveAirtimeOrData(final Context context, final int amount, final String simiccid, final String simName, final String message, final int banklogo){
         class SaveTask extends AsyncTask<Void, Void, Void> {
 
             @Override
@@ -525,7 +531,7 @@ public class Methods {
                 //creating a task
                 Airtime airtime = new Airtime();
 
-                airtime.setAirtimeBalance(123);
+                airtime.setBalance(123);
                 airtime.setDate(queryDate);
                 airtime.setMessage(message);
                 airtime.setSimName(simName);
