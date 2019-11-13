@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +56,7 @@ public class USSDCODEService extends AccessibilityService {
 
         Log.d(TAG, text);
         // Handle USSD response here
-        //Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 
 
         sendMessageToActivity(text);

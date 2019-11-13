@@ -13,6 +13,9 @@ public class MyApplication extends Application implements LifecycleObserver {
     private String name;
     private String appstate;
     private String ussdservice;
+    private String iccid;
+    private String clickedItem;
+
     private static Context context;
     public
     Methods method;
@@ -81,5 +84,21 @@ public class MyApplication extends Application implements LifecycleObserver {
 
     public void setUssdservice(String ussdservice) {
         this.ussdservice = ussdservice;
+    }
+
+    public String getIccid() {
+        return iccid;
+    }
+
+    public void setIccid(String iccid) {
+        this.iccid = iccid;
+    }
+
+    public String getClickedItem() {
+        return clickedItem;
+    }
+
+    public void setClickedItem(String clickedItem) {
+        this.clickedItem = clickedItem;
     }
 }

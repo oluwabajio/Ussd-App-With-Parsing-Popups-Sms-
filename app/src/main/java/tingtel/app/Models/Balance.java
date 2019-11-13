@@ -1,30 +1,31 @@
 package tingtel.app.Models;
 
-import android.arch.persistence.room.ColumnInfo;
+import android.animation.PropertyValuesHolder;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.util.Date;
+
 @Entity
-public class Data {
+public class Balance {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    int id;
 
-    private String SimName;
+    String SimName;
 
-    private String SimUuid;
+    String SimUuid;
 
-    private String Message;
+    String type;
+    
+    String Message;
 
-    private float DataBalance;
+    Date date;
+
+    float balance;
 
 
-    public Data(String simName, String simUuid, String message, float dataBalance) {
-        SimName = simName;
-        SimUuid = simUuid;
-        Message = message;
-        DataBalance = dataBalance;
-    }
+
 
     public int getId() {
         return id;
@@ -58,11 +59,27 @@ public class Data {
         Message = message;
     }
 
-    public float getDataBalance() {
-        return DataBalance;
+    public Date getDate() {
+        return date;
     }
 
-    public void setDataBalance(float dataBalance) {
-        DataBalance = dataBalance;
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public float getBalance() {
+        return balance;
+    }
+
+    public void setBalance(float balance) {
+        this.balance = balance;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
