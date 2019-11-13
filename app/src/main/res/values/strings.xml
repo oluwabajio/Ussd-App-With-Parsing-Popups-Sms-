@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">tingtel App</string>
+    <string name="app_name">Tingtel App</string>
     <string name="action_settings">Settings</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -9,5 +9,14 @@
     Tingtel accessibility service by tapping the toggle switch in the upper right corner.
     Press the back button twice to return to Tingtel</string>
     <string name="title_activity_show_message">ShowMessage</string>
+
+    <string name="title_home">Home</string>
+    <string name="title_beneficiariess">Beneficiaries</string>
+    <string name="title_beneficiary">Beneficiary</string>
+    <string name="title_transfer">Transfer</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
+    <string name="title_activity_history">HistoryActivity</string>
+    <string name="title_activity_balance">BalanceActivity</string>
 
 </resources>

@@ -14,11 +14,11 @@ import android.support.annotation.NonNull;
 
 import java.util.concurrent.Executors;
 
-import tingtel.app.Interfaces.AirtimeDao;
-import tingtel.app.Models.Airtime;
+import tingtel.app.Interfaces.BalanceDao;
+import tingtel.app.Models.Balance;
 import tingtel.app.Models.DateConverter;
 
-@Database(entities = {Airtime.class},version = 1, exportSchema = false)
+@Database(entities = {Balance.class},version = 1, exportSchema = false)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -30,7 +30,7 @@ public abstract class AppDatabase extends RoomDatabase {
     private final MutableLiveData<String> mIsDatabaseCreated = new MutableLiveData<>();
 
 
-    public abstract AirtimeDao airtimeDao();
+    public abstract BalanceDao balanceDao();
 
 
     public synchronized static AppDatabase getInstance(Context context) {

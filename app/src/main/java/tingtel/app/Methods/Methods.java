@@ -19,7 +19,6 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -27,8 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import tingtel.app.Models.Airtime;
-import tingtel.app.R;
+import tingtel.app.Models.Balance;
 
 import static android.Manifest.permission.READ_PHONE_STATE;
 
@@ -254,7 +252,7 @@ public class Methods {
 //
 //        if (response.contains("Main Bal:")){
 //            //this is airtel check airtime balance
-//            servicename = "Airtime Balance";
+//            servicename = "Balance Balance";
 //            simname = "Airtel";
 //            bankLogoo = R.drawable.airtel_logo;
 //        } else if (response.toLowerCase().contains("recharge was successful")){
@@ -366,7 +364,6 @@ public class Methods {
                         NetworkArray[1] = simInfo1.getDisplayName().toString();
 
                         editor.putString(SimStatus, "SIM1SIM2");
-                        editor.putString("", "");
                         editor.putString("SIM2", "");
                         editor.putString("SIM1", "");
                         editor.putString("SIM2", "");
@@ -464,9 +461,9 @@ public class Methods {
                         editor.putString("SIM" + Simno + "ICCID", iccid);
                         editor.putInt("Simno", Simno);
                         editor.commit();
-                        Toast.makeText(activity, "mnc is true" + Simno, Toast.LENGTH_SHORT).show();
+                      //  Toast.makeText(activity, "mnc is true" + Simno, Toast.LENGTH_SHORT).show();
                          }
-                    Toast.makeText(activity, "mnc is false", Toast.LENGTH_SHORT).show();
+                 //   Toast.makeText(activity, "mnc is false", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -479,9 +476,9 @@ public class Methods {
                 } else if (Simno == 2) {
                     editor.putString(SimStatus, "SIM1SIM2");
                 }
+                    editor.commit();
 
-
-                Toast.makeText(activity, "" + Simno, Toast.LENGTH_SHORT).show();
+         //       Toast.makeText(activity, "" + Simno, Toast.LENGTH_SHORT).show();
 
 
 
@@ -526,19 +523,23 @@ public class Methods {
             protected Void doInBackground(Void... voids) {
 
                 Date queryDate = Calendar.getInstance().getTime();
+                String balanceType = "Balance";
                 AppDatabase appdatabase = AppDatabase.getDatabaseInstance(context);
 
                 //creating a task
-                Airtime airtime = new Airtime();
+                Balance balance = new Balance();
 
-                airtime.setBalance(123);
-                airtime.setDate(queryDate);
-                airtime.setMessage(message);
-                airtime.setSimName(simName);
-                airtime.setSimUuid(simiccid);
+                balance.setSimName(simName);
+                balance.setSimUuid(simiccid);
+                balance.setType(balanceType);
+                balance.setBalance(123);
+                balance.setDate(queryDate);
+                balance.setMessage(message);
+
+
 
                 //adding to database
-                appdatabase.airtimeDao().insert(airtime);
+                appdatabase.balanceDao().insert(balance);
 
                 return null;
             }

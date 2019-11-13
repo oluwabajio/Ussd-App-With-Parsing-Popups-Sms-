@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragments.TransferFragment">
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_centerHorizontal="true"
+          android:layout_alignParentBottom="true"
+          android:orientation="vertical"
+          android:layout_marginBottom="@dimen/_40sdp">
+
+
+          <mehdi.sakout.fancybuttons.FancyButton
+              android:id="@+id/btn_myTransfers"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingBottom="10dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
+              android:paddingTop="10dp"
+              android:layout_marginLeft="@dimen/_40sdp"
+              android:layout_marginRight="@dimen/_40sdp"
+              android:layout_marginTop="@dimen/_10sdp"
+              fancy:fb_borderColor="#FFFFFF"
+              fancy:fb_borderWidth="1dp"
+              fancy:fb_defaultColor="@color/colorLight"
+              fancy:fb_focusColor="@color/colorPrimary"
+              fancy:fb_iconPosition="left"
+              fancy:fb_radius="30dp"
+              fancy:fb_text="My Transfers"
+              fancy:fb_textColor="#FFFFFF" />
+
+          <mehdi.sakout.fancybuttons.FancyButton
+              android:id="@+id/btn_newTransfer"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingBottom="10dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
+              android:paddingTop="10dp"
+              android:layout_marginLeft="@dimen/_40sdp"
+              android:layout_marginRight="@dimen/_40sdp"
+              android:layout_marginTop="@dimen/_10sdp"
+              fancy:fb_borderColor="#FFFFFF"
+              fancy:fb_borderWidth="1dp"
+              fancy:fb_defaultColor="@color/colorLight"
+              fancy:fb_focusColor="@color/colorPrimary"
+              fancy:fb_iconPosition="left"
+              fancy:fb_radius="30dp"
+              fancy:fb_text="New Transfer"
+              fancy:fb_textColor="#FFFFFF" />
+
+
+          <mehdi.sakout.fancybuttons.FancyButton
+              android:id="@+id/btn_history"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingBottom="10dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
+              android:paddingTop="10dp"
+              android:layout_marginLeft="@dimen/_40sdp"
+              android:layout_marginRight="@dimen/_40sdp"
+              android:layout_marginTop="@dimen/_10sdp"
+              fancy:fb_borderColor="#FFFFFF"
+              fancy:fb_borderWidth="1dp"
+              fancy:fb_defaultColor="@color/colorLight"
+              fancy:fb_focusColor="@color/colorPrimary"
+              fancy:fb_iconPosition="left"
+              fancy:fb_radius="30dp"
+              fancy:fb_text="History"
+              fancy:fb_textColor="#FFFFFF" />
+
+      </LinearLayout>
+
+
+  </RelativeLayout>
+
+
+</FrameLayout>
