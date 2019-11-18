@@ -1,11 +1,14 @@
 package tingtel.app;
 
 import android.Manifest;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -52,6 +55,11 @@ public class BalanceActivity extends AppCompatActivity {
     int REQUEST_PHONE_STATE = 101;
     int i = 0;
 
+    String SimIccid, SimName, BalanceType;
+
+
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
 
 
@@ -62,15 +70,43 @@ public class BalanceActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        sharedPreferences = getSharedPreferences("TingTelPref", 0);
+        editor = sharedPreferences.edit();
 
         appdatabase = AppDatabase.getDatabaseInstance(BalanceActivity.this);
         Rv_Balance = (RecyclerView) findViewById(R.id.rv_history);
         btnClear = (Button)findViewById(R.id.btnClear);
         spNetworks = (Spinner) findViewById(R.id.sp_networks);
 
-        LoadDatabase();
-        populateSpinner();
+
+
+
+        appdatabase = AppDatabase.getDatabaseInstance(this);
+
+        Bundle bundle = getIntent().getExtras();
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("SimIccid")) {
+            SimIccid = bundle.getString("SimIccid");
+            SimName = bundle.getString("SimName");
+            BalanceType = bundle.getString("Type");
+            LoadDatabaseData(SimIccid, BalanceType, SimName);
+
+        } else {
+
+            LoadDatabase();
+            populateSpinner();
+        }
         spNetworks.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -103,6 +139,47 @@ public class BalanceActivity extends AppCompatActivity {
 
     }
 
+    private void LoadDatabaseData(final String  SimIccid, final String BalanceType, final String SimName) {
+
+        // Toast.makeText(this, "i am here", Toast.LENGTH_SHORT).show();
+        //load saved room data to recyclerview
+        Runnable r = new Runnable(){
+            @Override
+            public void run() {
+                //  final AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"production")
+                //            .build();
+                items.clear();
+                items = appdatabase.balanceDao().getAirtimeOrDataList( SimIccid, BalanceType);
+
+
+                BalanceActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Rv_Balance.setLayoutManager(new LinearLayoutManager(BalanceActivity.this));
+
+                        //show latest items first
+                        Collections.reverse(items);
+
+                        adapter= new BalanceAdapter(BalanceActivity.this, items);
+
+                        try {
+                            Rv_Balance.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
+                            //Toast.makeText(BalanceActivity.this, "notifydone", Toast.LENGTH_SHORT).show();
+
+                        } catch (Exception e) {
+                            Toast.makeText(BalanceActivity.this, "something amiss", Toast.LENGTH_SHORT).show();
+                        }
+                    }});
+            }
+        };
+
+        Thread newThread= new Thread(r);
+        newThread.start();
+
+
+    }
+
     private void populateSpinner() {
         if (ActivityCompat.checkSelfPermission(BalanceActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             //ask permission
@@ -114,17 +191,10 @@ public class BalanceActivity extends AppCompatActivity {
             String[] NetworkArray = methodsClass.DetectSimCards(BalanceActivity.this);
 
 
-            //first create a list from String array
-            List<String> list = new ArrayList<>(Arrays.asList(NetworkArray));
-            list.add("All");
-
-            //next, reverse the list using Collections.reverse method
-            Collections.reverse(list);
-            //next, convert the list back to String array
-//            NetworkArray = (String[]) list.toArray();
-
-            ArrayAdapter<String> networkArray = new ArrayAdapter<String>(BalanceActivity.this,R.layout.spinner_item, list);
+            ArrayAdapter<String> networkArray = new ArrayAdapter<String>(BalanceActivity.this,R.layout.spinner_item, NetworkArray);
             spNetworks.setAdapter(networkArray);
+
+            spNetworks.setSelection(networkArray.getCount()-1);
         }
 
 
@@ -171,7 +241,20 @@ public class BalanceActivity extends AppCompatActivity {
                 //  final AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"production")
                 //            .build();
                 items.clear();
-                items = appdatabase.balanceDao().getItemsBySim(spNetworks.getSelectedItem().toString());
+
+                String SimIccid;
+
+                if (spNetworks.getSelectedItemPosition() == 0) {
+                    SimIccid = sharedPreferences.getString("SIM1ICCID", "");
+
+                } else if (spNetworks.getSelectedItemPosition() == 1) {
+                    SimIccid = sharedPreferences.getString("SIM2ICCID", "");
+                } else {
+                    SimIccid = "";
+                }
+
+                Log.e("logmessage", "selected iccid " + SimIccid);
+                items = appdatabase.balanceDao().getItemsByUuid(SimIccid);
 
 
                 BalanceActivity.this.runOnUiThread(new Runnable() {

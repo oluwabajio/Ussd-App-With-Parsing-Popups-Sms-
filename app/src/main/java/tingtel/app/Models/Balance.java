@@ -20,6 +20,7 @@ public class Balance {
     
     String Message;
 
+
     Date date;
 
     float balance;
@@ -83,3 +84,8 @@ public class Balance {
         this.type = type;
     }
 }
+
+
+
+// Database structure
+//TYPE:   Data or Airtime

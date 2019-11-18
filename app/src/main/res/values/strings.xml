@@ -15,8 +15,17 @@
     <string name="title_beneficiary">Beneficiary</string>
     <string name="title_transfer">Transfer</string>
     <string name="title_settings">Settings</string>
-    <string name="title_activity_splash_screen">SplashScreen</string>
-    <string name="title_activity_history">HistoryActivity</string>
-    <string name="title_activity_balance">BalanceActivity</string>
+    <string name="title_activity_splash_screen">Tingtel App</string>
+    <string name="title_activity_history">History</string>
+    <string name="title_activity_balance">Balance</string>
+    <string name="title_activity_list_ussd">ListUssdActivity</string>
+    <string name="Network_Title">Network Title</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="Code">Code</string>
+    <string name="dial_code">Dial Code</string>
+    <string name="title_activity_beneficiary_add_fragment">BeneficiaryAddFragment</string>
+    <string name="title_activity_transfer_airtime">TransferAirtimeActivity</string>
+    <string name="title_activity_request_permission">RequestPermissionActivity</string>
 
 </resources>

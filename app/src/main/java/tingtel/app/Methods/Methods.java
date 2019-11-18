@@ -26,7 +26,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import tingtel.app.MainActivity;
 import tingtel.app.Models.Balance;
+import tingtel.app.R;
+import tingtel.app.RequestPermissionActivity;
 
 import static android.Manifest.permission.READ_PHONE_STATE;
 
@@ -49,6 +52,9 @@ public class Methods {
     String Sim2Uuid = "SIM2UUID";
     String Sim1Name = "SIM1NAME";
     String Sim2Name = "SIM2NAME";
+
+//    MainActivity mainActivity = new MainActivity();
+
 
 
 
@@ -99,7 +105,7 @@ public class Methods {
 
     }
 
-    public void DialUssdCodeNewApi(final Activity activity, String UssdCode, final Context context, int simno, final String servicename, final String simname, final int networklogo) {
+    public void DialUssdCodeNewApi(final Activity activity, String UssdCode, final Context context, int simno, final String servicename, final int networklogo) {
         progressDialog = new ProgressDialog(context);
 //        final TextView tv = (TextView) activity.findViewById(R.id.txtPopupMessage);
 //        if (progressDialog != null && progressDialog.isShowing()) {
@@ -154,6 +160,7 @@ public class Methods {
                             //save history
                         //    SaveHistory(activity, Integer.parseInt("3"), simname, servicename, response.toString(), networklogo);
 
+                            ((MainActivity)context).checkPopupandSave(response.toString());
 
                         } else {
                             return;
@@ -218,7 +225,7 @@ public class Methods {
                             if (!servicename.equalsIgnoreCase("")) {
                                 //save history
                               //  SaveHistory(activity, Integer.parseInt("3"), simname, servicename, response.toString(), networklogo);
-
+                                ((MainActivity)context).checkPopupandSave(response.toString());
 
                             } else {
                                 return;
@@ -496,6 +503,11 @@ public class Methods {
 //                } else if (activeSubscriptionInfoList.size() == 3) {
 //                    Toast.makeText(this, "3 Sims detected", Toast.LENGTH_SHORT).show();
 //                }
+            } else {
+
+                //request Permission
+                Intent intent = new Intent(activity, RequestPermissionActivity.class);
+                activity.startActivity(intent);
             }
 
         }
@@ -516,14 +528,13 @@ public class Methods {
 
 
 
-    public void SaveAirtimeOrData(final Context context, final int amount, final String simiccid, final String simName, final String message, final int banklogo){
+    public void SaveAirtimeOrData(final Context context, final float amount, final String simiccid, final String simName, final String message, final int banklogo, final String serviceType){
         class SaveTask extends AsyncTask<Void, Void, Void> {
 
             @Override
             protected Void doInBackground(Void... voids) {
 
                 Date queryDate = Calendar.getInstance().getTime();
-                String balanceType = "Balance";
                 AppDatabase appdatabase = AppDatabase.getDatabaseInstance(context);
 
                 //creating a task
@@ -531,8 +542,8 @@ public class Methods {
 
                 balance.setSimName(simName);
                 balance.setSimUuid(simiccid);
-                balance.setType(balanceType);
-                balance.setBalance(123);
+                balance.setType(serviceType);
+                balance.setBalance(amount);
                 balance.setDate(queryDate);
                 balance.setMessage(message);
 
@@ -561,11 +572,21 @@ public class Methods {
 
 
 
+    //capitalize all words
+    public String capitalizer(String word){
 
+        String[] words = word.split(" ");
+        StringBuilder sb = new StringBuilder();
+        if (words[0].length() > 0) {
+            sb.append(Character.toUpperCase(words[0].charAt(0)) + words[0].subSequence(1, words[0].length()).toString().toLowerCase());
+            for (int i = 1; i < words.length; i++) {
+                sb.append(" ");
+                sb.append(Character.toUpperCase(words[i].charAt(0)) + words[i].subSequence(1, words[i].length()).toString().toLowerCase());
+            }
+        }
+        return  sb.toString();
 
-
-
-
+    }
 
 
 

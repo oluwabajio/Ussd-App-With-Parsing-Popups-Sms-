@@ -45,4 +45,7 @@ dependencies {
 
     //fancy buutton (round corners)
     implementation 'com.github.medyo:fancybuttons:1.9.1'
+
+    //glide for displaying images
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
 }

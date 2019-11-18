@@ -15,17 +15,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".BalanceActivity"
-            android:label="@string/title_activity_balance"
+            android:name=".RequestPermissionActivity"
+            android:label="@string/title_activity_request_permission"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".HistoryActivity"
-            android:label="@string/title_activity_history"
+            android:name=".TransferAirtimeActivity"
+            android:label="@string/title_activity_transfer_airtime"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ListUssdActivity"
+            android:label="@string/title_activity_list_ussd"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".BalanceActivity"
+            android:label="@string/title_activity_balance"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SplashScreen"
             android:label="@string/title_activity_splash_screen"
-            android:theme="@style/ColdStart">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,7 +47,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <service
             android:name=".Services.USSDCODEService"

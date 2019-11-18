@@ -1,5 +1,8 @@
 package tingtel.app;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -7,31 +10,39 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+import tingtel.app.Adapters.BalanceAdapter;
 import tingtel.app.Fragments.MainFragment;
 import tingtel.app.Fragments.SettingsFragment;
 import tingtel.app.Fragments.TransferFragment;
 import tingtel.app.Methods.Methods;
 import tingtel.app.Methods.MyApplication;
+import tingtel.app.Services.UpdateAirtimeNotification;
 import tingtel.app.ViewModels.BalanceViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,9 +53,15 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     Methods  methodsClass = new Methods();
 
+    RemoteViews notificationlayout;
+    NotificationManager Nmanager;
+    NotificationCompat.Builder builder;
+
     BalanceViewModel balanceViewModel;
 
     MyApplication globalVariable;
+
+    Fragment mainfragment, transferfragment, settingsfragment;
 
 
 
@@ -63,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = new MainFragment();
         loadFragment(fragment);
 
+        ShowAirtimeNotification();
+
 
 
 
@@ -70,19 +89,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void initObjects() {
         LocalBroadcastManager.getInstance(this).registerReceiver(UssdReceiver, new IntentFilter("TintelIntentMessage"));
+      //  Toast.makeText(this, "ussd receiver activated", Toast.LENGTH_SHORT).show();
 
-//        globalVariable = (MyApplication) this.getApplicationContext();
-//
-//        balanceViewModel = ViewModelProviders.of(this).get(BalanceViewModel.class);
-//
-//
-//
-//
+        globalVariable = (MyApplication) this.getApplicationContext();
+
+        balanceViewModel = ViewModelProviders.of(this).get(BalanceViewModel.class);
+
+
+
+
 //        balanceViewModel.getCurrentBalance().observe(MainActivity.this, new Observer<String>() {
 //            @Override
 //            public void onChanged(@Nullable String balance) {
 //
-//                Toast.makeText(MainActivity.this, balance, Toast.LENGTH_SHORT).show();
+//          //      Toast.makeText(MainActivity.this, balance, Toast.LENGTH_SHORT).show();
 //
 //
 //            }
@@ -95,10 +115,13 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-
-
+         mainfragment = new MainFragment();
+         transferfragment = new TransferFragment();
+         settingsfragment = new SettingsFragment();
 
     }
+
+
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -106,22 +129,19 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment fragment;
+
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     toolbar.setTitle("Home");
-                    fragment = new MainFragment();
-                    loadFragment(fragment);
+                    loadFragment(mainfragment);
                     return true;
                 case R.id.navigation_beneficiary:
                     toolbar.setTitle("Transfer");
-                    fragment = new TransferFragment();
-                    loadFragment(fragment);
+                    loadFragment(transferfragment);
                     return true;
                 case R.id.navigation_settings:
                     toolbar.setTitle("Settings");
-                    fragment = new SettingsFragment();
-                    loadFragment(fragment);
+                    loadFragment(settingsfragment);
                     return true;
 
             }
@@ -142,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+       // getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -166,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(SmsReceiver, new IntentFilter("SmsMessage"));
-
         super.onResume();
     }
 
@@ -174,13 +193,14 @@ public class MainActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(SmsReceiver);
-        // LocalBroadcastManager.getInstance(this).unregisterReceiver(UssdReceiver);
+     //    LocalBroadcastManager.getInstance(this).unregisterReceiver(UssdReceiver);
+
     }
 
     @Override
     public void onDestroy() {
 
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(UssdReceiver);
+     //   LocalBroadcastManager.getInstance(this).unregisterReceiver(UssdReceiver);
         super.onDestroy();
     }
 
@@ -191,13 +211,15 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equalsIgnoreCase("SmsMessage")) {
 
+                Toast.makeText(MainActivity.this, "hhhh", Toast.LENGTH_SHORT).show();
                 final String message = intent.getStringExtra("message");
                 final String senderNum = intent.getStringExtra("senderNum");
 
                 String servicename = "";
                 String simname = "";
-                String servicetype;
+                String ServiceType = "";
                 int serviceLogo = R.drawable.ic_launcher_background;
+                String simiccid = globalVariable.getIccid();
 
 
 
@@ -212,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //Airtel Data Balance
-                if((senderNum.equalsIgnoreCase("Airtel")) && (message.toLowerCase().contains(""))) {
+                if((senderNum.equalsIgnoreCase("Glo")) && (message.toLowerCase().contains(""))) {
 
                     servicename = "Data Balance";
                     simname = "9mobile";
@@ -225,19 +247,28 @@ public class MainActivity extends AppCompatActivity {
                     //    CheckSender(senderNum, message);
 
 
-                } else if ((senderNum.equalsIgnoreCase("9mobile")) && (message.toLowerCase().contains("your data balance as at"))  ) {
+                } else if ((senderNum.equalsIgnoreCase("9mobile")) && ((message.toLowerCase().contains("your data balance as at")) || (message.toLowerCase().contains("you have")) || (message.toLowerCase().contains("your monthly data")) || (message.toLowerCase().contains("valid till")) )) {
 
-                    Toast.makeText(MainActivity.this, "bbbbn" + message, Toast.LENGTH_SHORT).show();
+                   Toast.makeText(MainActivity.this, "bbbbn" + message, Toast.LENGTH_SHORT).show();
                     servicename = "Data Balance";
-                    simname = "Airtel NG";
+                    simname = "9Mobile";
                     serviceLogo = R.drawable.nmobile_logo;
 
+                    ServiceType = "Data";
 
-                    String[] datamessage = message.toLowerCase().split("your data balance as at");
-                    Toast.makeText(MainActivity.this, datamessage[1], Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
 
-                    Pattern pattern = Pattern.compile("\\d+mb");
-                    Matcher matcher = pattern.matcher(datamessage[1]);
+
+                    Pattern pattern = Pattern.compile("\\d+[Mm][Bb]");
+                    Matcher matcher = pattern.matcher(message);
+
+
+                    Pattern pattern2 = Pattern.compile("[0123456789]+.[0123456789]+mb");
+                    Matcher matcher2 = pattern2.matcher(message);
+
+                    Pattern pattern3 = Pattern.compile("\\d[Mm][Bb]");
+                    Matcher matcher3 = pattern3.matcher(message);
+
 
                     String balance = "";
 
@@ -246,12 +277,59 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, matcher.group(0), Toast.LENGTH_SHORT).show();
                         balance = matcher.group(0);
 
-                    } else {
-                        Toast.makeText(MainActivity.this, "not found", Toast.LENGTH_SHORT).show();
+                    } else if (matcher2.find()) {
+                        balance = matcher2.group(0);
+                    }
+
+                    else if (matcher3.find()) {
+                        balance = matcher3.group(0);
+                    }
+
+                    else {
+                        Toast.makeText(MainActivity.this, "not found" + message, Toast.LENGTH_SHORT).show();
+                        return;
                     }
 
 
+
                     updateBalance(balance);
+                    saveHistory(balance, simname, message, R.drawable.nmobile_logo, ServiceType);;
+
+                }
+                else if ((senderNum.equalsIgnoreCase("9mobile")) && (message.toLowerCase().contains("main bal:"))) {
+
+                    Toast.makeText(MainActivity.this, "bbbbn" + message, Toast.LENGTH_SHORT).show();
+                    servicename = "Airtime Balance";
+                    simname = "9Mobile";
+                    serviceLogo = R.drawable.nmobile_logo;
+
+                    ServiceType = "Airtime";
+
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+
+
+                    Pattern pattern = Pattern.compile("N\\s\\d+.\\d+");
+                    Matcher matcher = pattern.matcher(message);
+
+
+
+
+                    String balance = "";
+
+                    if (matcher.find())
+                    {
+                        Toast.makeText(MainActivity.this, matcher.group(0), Toast.LENGTH_SHORT).show();
+                        balance = matcher.group(0);
+
+                    }  else {
+                        Toast.makeText(MainActivity.this, "not found" + message, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+
+
+                    updateBalance(balance);
+                    saveHistory(balance, simname, message, R.drawable.nmobile_logo, ServiceType);
 
                 }
 
@@ -262,8 +340,31 @@ public class MainActivity extends AppCompatActivity {
                     simname = "Airtel NG";
                     serviceLogo = R.drawable.nmobile_logo;
 
+                    ServiceType = "Data";
+
                     Log.e("logmessage", "supposed to receive here");
                     Log.e("logmessage", message);
+
+                }
+
+
+                else if ((senderNum.equalsIgnoreCase("Airtel")) && (message.toLowerCase().contains("you do not have an active data plan"))) {
+
+
+                    Toast.makeText(MainActivity.this, "vvf", Toast.LENGTH_SHORT).show();
+                    servicename = "Data Balance";
+                    simname = "Airtel";
+
+                    ServiceType = "Data";
+
+
+
+
+                    String balance = "0 Mb";
+
+
+                    updateBalance(balance);
+                    saveHistory(balance, simname, message, R.drawable.airtel_logo, ServiceType);;
 
                 }
 
@@ -272,22 +373,21 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                String simiccid = "";
 
-                methodsClass.SaveAirtimeOrData(getApplicationContext(), Integer.parseInt("3"), simiccid, simname, message, serviceLogo);
-                //methodsClass.SaveHistory(getApplicationContext(), Integer.parseInt("4323"), "Airtel", "Bank Transfer", "hggh", R.drawable.mtn_logo);
+
+
+                Log.e("logmessage", simiccid);
 
 
                 Intent intent1 = new Intent(MainActivity.this, ShowMessage.class);
                 intent1.putExtra("message", message);
                 intent1.putExtra("senderNum", senderNum);
-             //   startActivity(intent1);
-
 
             } else {
-                //   Toast.makeText(MainActivity.this, "not received", Toast.LENGTH_SHORT).show();
-                Log.e("sms", "not received");
-                return;
+                Toast.makeText(MainActivity.this, "ddddk", Toast.LENGTH_SHORT).show();
+                   Log.e("sms", "not received");
+
+              //  return;
             }
 
 
@@ -300,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
 
             String message = intent.getStringExtra("TingtelMessage");
-             // Toast.makeText(context, "received" + message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "received" + message, Toast.LENGTH_SHORT).show();
 
             Log.e("logmessage", "2222222" + message);
 
@@ -336,39 +436,50 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void checkPopupandSave(String message) {
-        String ussdservice = globalVariable.getUssdservice();
+    public void checkPopupandSave(String message) {
+
+
+        globalVariable = (MyApplication) this.getApplicationContext();
+        String ussdservice = "";
         int servicelogo;
         String simname;
-        String ServiceName;
+        String ServiceName = "";
         String balance = "";
+        String ServiceType = "";
+
+
+        ussdservice = globalVariable.getUssdservice();
 
         if (ussdservice.equalsIgnoreCase("mtn-airtime")){
             servicelogo = R.drawable.mtn_logo;
             simname = "Mtn Ng";
             ServiceName = "Mtn Balance";
+            ServiceType = "Airtime";
 
+            try {
+                Pattern pattern = Pattern.compile("N\\d+.\\d+");
+                Matcher matcher = pattern.matcher(message);
+                if (matcher.find())
+                {
+                    Toast.makeText(this, matcher.group(0), Toast.LENGTH_SHORT).show();
+                    balance = matcher.group(0);
+                    updateBalance(balance);
+                    saveHistory(balance, simname, message, servicelogo, ServiceType);;
+                } else {
+                    Toast.makeText(this, "not foundjj", Toast.LENGTH_SHORT).show();
+                }
 
-            Pattern pattern = Pattern.compile("N\\d+.\\d+");
-            Matcher matcher = pattern.matcher(message);
-            if (matcher.find())
-            {
-                Toast.makeText(this, matcher.group(0), Toast.LENGTH_SHORT).show();
-                balance = matcher.group(0);
-            } else {
-                Toast.makeText(this, "not foundjj", Toast.LENGTH_SHORT).show();
+                globalVariable.setUssdservice("");
+
+            } catch (Exception e) {
+
             }
 
-
-
-
-            globalVariable.setUssdservice("");
-            updateBalance(balance);
         }  else if (ussdservice.equalsIgnoreCase("glo-airtime")) {
             servicelogo = R.drawable.glo_logo;
             simname = "Glo Ng";
             ServiceName = "Glo Balance";
-
+            ServiceType = "Airtime";
             globalVariable.setUssdservice("");
 
         } else if (ussdservice.equalsIgnoreCase("airtel-airtime")) {
@@ -376,7 +487,7 @@ public class MainActivity extends AppCompatActivity {
             servicelogo = R.drawable.airtel_logo;
             simname = "Airtel Ng";
             ServiceName = "Balance Balance";
-
+            ServiceType = "Airtime";
             Pattern pattern = Pattern.compile("N\\d+.\\d+");
             Matcher matcher = pattern.matcher(message);
 
@@ -384,18 +495,20 @@ public class MainActivity extends AppCompatActivity {
             {
                 Toast.makeText(this, matcher.group(0), Toast.LENGTH_SHORT).show();
                 balance = matcher.group(0);
+                updateBalance(balance);
+                saveHistory(balance, simname, message, servicelogo, ServiceType);;
             } else {
                 Toast.makeText(this, "not found", Toast.LENGTH_SHORT).show();
             }
 
             globalVariable.setUssdservice("");
-            updateBalance(balance);
+
         } else if (ussdservice.equalsIgnoreCase("9mobile-airtime")) {
 
             servicelogo = R.drawable.nmobile_logo;
             simname = "9mobile";
             ServiceName = "Balance Balance";
-
+            ServiceType = "Airtime";
             Pattern pattern = Pattern.compile("N \\d+.\\d+");
             Matcher matcher = pattern.matcher(message);
 
@@ -403,18 +516,20 @@ public class MainActivity extends AppCompatActivity {
             {
                 Toast.makeText(this, matcher.group(0), Toast.LENGTH_SHORT).show();
                 balance = matcher.group(0);
+                updateBalance(balance);
+                saveHistory(balance, simname, message, servicelogo, ServiceType);
             } else {
                 Toast.makeText(this, "not found", Toast.LENGTH_SHORT).show();
             }
 
             globalVariable.setUssdservice("");
-            updateBalance(balance);
+
         } else if (ussdservice.equalsIgnoreCase("mtn-data")) {
 
             servicelogo = R.drawable.mtn_logo;
             simname = "Mtn Ng";
             ServiceName = "Data Balance";
-
+            ServiceType = "Data";
             Pattern pattern = Pattern.compile("\\d+.\\d+MB");
             Matcher matcher = pattern.matcher(message);
 
@@ -423,17 +538,20 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, matcher.group(0), Toast.LENGTH_SHORT).show();
                 balance = matcher.group(0);
                 Toast.makeText(this, "This matcher: "+matcher.group(0),Toast.LENGTH_SHORT).show();
+                updateBalance(balance);
+                saveHistory(balance, simname, message, servicelogo, ServiceType);
             } else {
                 Toast.makeText(this, "not found", Toast.LENGTH_SHORT).show();
             }
 
             globalVariable.setUssdservice("");
-            updateBalance(balance);
+
         } else if (ussdservice.equalsIgnoreCase("glo-data")) {
 
             servicelogo = R.drawable.glo_logo;
             simname = "Glo Ng";
             ServiceName = "Data Balance";
+            ServiceType = "Data";
 
             globalVariable.setUssdservice("");
             updateBalance(balance);
@@ -442,14 +560,15 @@ public class MainActivity extends AppCompatActivity {
             servicelogo = R.drawable.airtel_logo;
             simname = "Airtel Ng";
             ServiceName = "Data Balance";
+            ServiceType = "Data";
 
-            globalVariable.setUssdservice("");
-            updateBalance(balance);
+
         }else if (ussdservice.equalsIgnoreCase("9mobile-data")) {
 
             servicelogo = R.drawable.nmobile_logo;
             simname = "9mobile";
             ServiceName = "Data Balance";
+            ServiceType = "Data";
 
 
         } else if (ussdservice.equalsIgnoreCase("mtn-phone")) {
@@ -457,49 +576,40 @@ public class MainActivity extends AppCompatActivity {
             servicelogo = R.drawable.mtn_logo;
             simname = "Mtn Ng";
             ServiceName = "Phone Number";
+            ServiceType = "";
 
-            globalVariable.setUssdservice("");
-            updateBalance(balance);
         } else if (ussdservice.equalsIgnoreCase("glo-phone")) {
 
             servicelogo = R.drawable.glo_logo;
             simname = "Glo Ng";
             ServiceName = "Phone Number";
+            ServiceType = "";
 
-            globalVariable.setUssdservice("");
-            updateBalance(balance);
         }  else if (ussdservice.equalsIgnoreCase("airtel-phone")) {
 
             servicelogo = R.drawable.airtel_logo;
             simname = "Airtel Ng";
             ServiceName = "Phone Number";
+            ServiceType = "";
 
-            globalVariable.setUssdservice("");
-            updateBalance(balance);
         }  else if (ussdservice.equalsIgnoreCase("9mobile-phone")) {
 
             servicelogo = R.drawable.nmobile_logo;
             simname = "9mobile";
             ServiceName = "Phone Number";
+            ServiceType = "";
 
-        }
-
-
-
-        else {
+        }   else {
 
            // servicelogo = R.drawable.history;
             simname = "";
             ServiceName = "";
+            ServiceType = "";
             globalVariable.setUssdservice("");
             return;
         }
 
 
-        String simiccid = globalVariable.getIccid();
-
-        String Amount =  balance.replaceAll("[^0-9]", "");
-        methodsClass.SaveAirtimeOrData(getApplicationContext(), Integer.parseInt("66"), simiccid,  simname, message, servicelogo);
 
 
 
@@ -508,14 +618,133 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    private void saveHistory(String balance, String simname, String message, int servicelogo, String ServiceType) {
+
+        String simiccid = globalVariable.getIccid();
+        Log.e("logmessage", simiccid + balance);
+
+        String Amount =  balance.replaceAll("[^0-9.]", "");
+
+        Float fAmount = Float.valueOf(Amount.trim());
+
+
+        Toast.makeText(this, "amount is " + fAmount, Toast.LENGTH_SHORT).show();
+         methodsClass.SaveAirtimeOrData(getApplicationContext(), fAmount, simiccid,  simname, balance, servicelogo, ServiceType);
+
+
+
+
+
+    }
+
+
 
     private void updateBalance(String balance) {
-        Toast.makeText(this, "i dey", Toast.LENGTH_SHORT).show();
-        balanceViewModel.setCurrentBalance(balance);
+
+        // Toast.makeText(getActivity(), "Click0" + globalVariable.getClickedItem() + globalVariable.getUssdservice() + balance, Toast.LENGTH_SHORT).show();
+
+        String clickedItem = globalVariable.getClickedItem();
+
+        if (clickedItem.equalsIgnoreCase("Sim1Airtime")) {
 
 
+            balanceViewModel.setCurrentAirtimeBalanceSim1(balance);
 
+        } else if (clickedItem.equalsIgnoreCase("Sim2Airtime")) {
+
+
+            balanceViewModel.setCurrentAirtimeBalanceSim2(balance);
+
+        }  else if (clickedItem.equalsIgnoreCase("Sim1Data")) {
+
+            balanceViewModel.setCurrentDataBalanceSim1(balance);
+
+        }  else if (clickedItem.equalsIgnoreCase("Sim2Data")) {
+
+            balanceViewModel.setCurrentDataBalanceSim2(balance);
+        } else {
+
+            //  Toast.makeText(getActivity(), "This is else", Toast.LENGTH_SHORT).show();
+        }
+        globalVariable.setClickedItem("");
     }
 
+
+
+
+
+
+    private void ShowAirtimeNotification() {
+
+        //very important to create a notification channel in android 8 and above
+        CreateNotificationChannel();
+
+
+        notificationlayout = new RemoteViews(getPackageName(), R.layout.notificationlayout);
+
+
+
+
+
+        Intent checkBalanceIntent = new Intent(this, UpdateAirtimeNotification.class);
+        checkBalanceIntent.setAction("update_airtime");
+//  checkBalanceIntent.putExtra(EXTRA_NOTIFICATION_ID, 0);
+        PendingIntent checkBalancePendingIntent =
+                PendingIntent.getBroadcast(this, 0, checkBalanceIntent, 0);
+
+
+        Intent checkBalanceSim1Intent = new Intent(this, MainActivity.class);
+        checkBalanceSim1Intent.putExtra("update_sim1_airtime", "update_sim1_airtime");
+//        PendingIntent psim1 = pendingIntent.getActivity(this, 0, checkBalanceSim1Intent, 0);
+        PendingIntent psim1 = PendingIntent.getBroadcast(this, 0, checkBalanceSim1Intent, 0);
+
+
+        Intent checkBalanceSim2Intent = new Intent(this, MainActivity.class);
+        checkBalanceSim2Intent.putExtra("update_sim2_airtime", "update_sim2_airtime");
+        PendingIntent psim2 = PendingIntent.getActivity(this, 0, checkBalanceSim2Intent, 0);
+
+
+
+
+
+
+
+
+        notificationlayout.setOnClickPendingIntent(R.id.btnSim1Airtime, psim1);
+
+        notificationlayout.setOnClickPendingIntent(R.id.btnSim2Airtime, psim2);
+
+
+        Nmanager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
+
+        builder = new NotificationCompat.Builder(this, "01")
+                .setSmallIcon(R.drawable.history)
+                .setCustomContentView(notificationlayout)
+                .setOngoing(true)
+                .setChannelId("01")
+                .setAutoCancel(true);
+
+
+        Nmanager.notify(01, builder.build());
+    }
+
+    private void CreateNotificationChannel() {
+
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Android 8 Notification Channel";
+            String description = "Android 8 Notification Channel Description";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("01", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+    }
 
 }

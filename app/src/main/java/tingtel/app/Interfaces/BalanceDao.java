@@ -36,7 +36,9 @@ public interface BalanceDao {
     public Balance getLastAirtimeOrData(String iccid, String type);
 
     @Query("SELECT * FROM  Balance WHERE simuuid LIKE :simiccid")
-    public List<Balance> getItemsBySim(String simiccid);
+    public List<Balance> getItemsByUuid(String simiccid);
 
+    @Query("SELECT * FROM Balance WHERE SimUuid = :iccid AND type = :type")
+    public List<Balance>  getAirtimeOrDataList(String iccid, String type);
 
 }

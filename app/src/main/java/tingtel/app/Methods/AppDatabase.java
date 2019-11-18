@@ -15,10 +15,12 @@ import android.support.annotation.NonNull;
 import java.util.concurrent.Executors;
 
 import tingtel.app.Interfaces.BalanceDao;
+import tingtel.app.Interfaces.NetworkCodesDao;
 import tingtel.app.Models.Balance;
 import tingtel.app.Models.DateConverter;
+import tingtel.app.Models.NetworksCode;
 
-@Database(entities = {Balance.class},version = 1, exportSchema = false)
+@Database(entities = {Balance.class, NetworksCode.class},version = 1, exportSchema = false)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -31,6 +33,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
 
     public abstract BalanceDao balanceDao();
+    public abstract NetworkCodesDao networksCodesDao();
 
 
     public synchronized static AppDatabase getInstance(Context context) {
@@ -54,6 +57,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             @Override
                             public void run() {
                                 //   getInstance(context).databaseInterface().insertAll(BanksCode.populateBanksCodes());
+
+                                getInstance(context).networksCodesDao().insertAll(NetworksCode.populateNetworksCodes());
 
                                 AppDatabase database = AppDatabase.getInstance(context);
 

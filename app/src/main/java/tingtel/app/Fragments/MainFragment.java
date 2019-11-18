@@ -1,6 +1,9 @@
 package tingtel.app.Fragments;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -8,41 +11,58 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import mehdi.sakout.fancybuttons.FancyButton;
+import tingtel.app.BalanceActivity;
+import tingtel.app.ListUssdActivity;
+import tingtel.app.MainActivity;
 import tingtel.app.Methods.AppDatabase;
 import tingtel.app.Methods.Methods;
 import tingtel.app.Methods.MyApplication;
 import tingtel.app.Models.Balance;
 import tingtel.app.R;
 import tingtel.app.Services.USSDCODEService;
+import tingtel.app.Services.UpdateAirtimeNotification;
 import tingtel.app.ViewModels.BalanceViewModel;
 
 import static android.Manifest.permission.CALL_PHONE;
 import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.RECEIVE_SMS;
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class MainFragment extends Fragment {
 
     TextView tvSim1Airtime, tvSim2Airtime, tvSim1Data, tvSim2Data, tvSim1Network, tvSim2Network;
     ImageView refSim1Airtime, refSim2Airtime, refSim1Data, refSim2Data;
     LinearLayout Sim1Layout, Sim2Layout;
+    FancyButton btn_sim1UssdCodes, btn_sim2UssdCodes;
+    CardView cd_AirtimeSim1, cd_AirtimeSim2, cd_DataSim1, cd_DataSim2;
+
+    RemoteViews notificationlayout;
+    NotificationManager Nmanager;
+    NotificationCompat.Builder builder;
 
     Methods methodsClass = new Methods();
 
@@ -75,10 +95,50 @@ public class MainFragment extends Fragment {
       //  populateViews(view);
 
         getSimcardDetails();
+        loadExistingValues();
 
+        ShowAirtimeNotification();
 
 
         return view;
+    }
+
+
+    private void loadExistingValues() {
+
+
+
+        final String Sim1Iccid = sharedPreferences.getString("SIM1ICCID", "");
+        final String Sim2Iccid = sharedPreferences.getString("SIM2ICCID", "");
+
+        try {
+            balancemodel.setCurrentAirtimeBalanceSim1(dbb.balanceDao().getLastAirtimeOrData(Sim1Iccid, "Airtime").getMessage());
+        } catch (Exception ex) {
+            Log.e("logmessage", "Exception CurrentAirtimeBalanceSim1 " + ex.getMessage());
+        }
+
+
+        try {
+            balancemodel.setCurrentAirtimeBalanceSim2(dbb.balanceDao().getLastAirtimeOrData(Sim2Iccid, "Airtime").getMessage());
+        } catch (Exception ex) {
+            Log.e("logmessage", "Exception CurrentAirtimeBalanceSim " + ex.getMessage());
+        }
+
+
+        try {
+            balancemodel.setCurrentDataBalanceSim1(dbb.balanceDao().getLastAirtimeOrData(Sim1Iccid, "Data").getMessage());
+        } catch (Exception ex) {
+            Log.e("logmessage", "Exception CurrentDataBalanceSim1 " + ex.getMessage());
+        }
+
+
+        try {
+
+            balancemodel.setCurrentDataBalanceSim2(dbb.balanceDao().getLastAirtimeOrData(Sim2Iccid, "Data").getMessage());
+        } catch (Exception ex) {
+            Log.e("logmessage", "Exception CurrentDataBalanceSim " + ex.getMessage());
+        }
+
     }
 
     private void getSimcardDetails() {
@@ -88,9 +148,11 @@ public class MainFragment extends Fragment {
         String Sim1Network = sharedPreferences.getString("SIM1NAME", "");
         String Sim2Network = sharedPreferences.getString("SIM2NAME", "");
 
-        Toast.makeText(getActivity(), "fall "+ Sim1Network + Sim2Network + NoOfSIm, Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(getActivity(), "fall "+ Sim1Network + Sim2Network + NoOfSIm, Toast.LENGTH_SHORT).show();
 
         if (NoOfSIm.equalsIgnoreCase("NOSIM")) {
+
+
 
         } else if (NoOfSIm.equalsIgnoreCase("SIM1")) {
 
@@ -119,50 +181,44 @@ public class MainFragment extends Fragment {
         balancemodel = ViewModelProviders.of(getActivity()).get(BalanceViewModel.class);
 
 
-        balancemodel.getCurrentBalance().observe(getActivity(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String balance) {
 
-                Toast.makeText(getContext(), "balance is "+balance, Toast.LENGTH_SHORT).show();
 
-                updateBalanceView(balance);
-
-            }
-        });
 
 
     }
 
-    private void updateBalanceView(String balance) {
-
-        Toast.makeText(getActivity(), "Click0" + globalVariable.getClickedItem() + globalVariable.getUssdservice() + balance, Toast.LENGTH_SHORT).show();
-
-        String clickedItem = globalVariable.getClickedItem();
-
-        if (clickedItem.equalsIgnoreCase("Sim1Airtime")) {
-
-            tvSim1Airtime.setText(balance);
-
-        } else if (clickedItem.equalsIgnoreCase("Sim2Airtime")) {
-
-            tvSim2Airtime.setText(balance);
-
-        }  else if (clickedItem.equalsIgnoreCase("Sim1Data")) {
-
-            tvSim1Data.setText(balance);
-
-        }  else if (clickedItem.equalsIgnoreCase("Sim2Data")) {
-            tvSim2Data.setText(balance);
-        } else {
-
-            Toast.makeText(getActivity(), "This is else", Toast.LENGTH_SHORT).show();
-        }
-       globalVariable.setClickedItem("");
-    }
+//    private void updateBalanceView(String balance) {
+//
+//       // Toast.makeText(getActivity(), "Click0" + globalVariable.getClickedItem() + globalVariable.getUssdservice() + balance, Toast.LENGTH_SHORT).show();
+//
+//        String clickedItem = globalVariable.getClickedItem();
+//
+//        if (clickedItem.equalsIgnoreCase("Sim1Airtime")) {
+//
+//            tvSim1Airtime.setText(balance);
+//
+//        } else if (clickedItem.equalsIgnoreCase("Sim2Airtime")) {
+//
+//            tvSim2Airtime.setText(balance);
+//
+//        }  else if (clickedItem.equalsIgnoreCase("Sim1Data")) {
+//
+//            tvSim1Data.setText(balance);
+//
+//        }  else if (clickedItem.equalsIgnoreCase("Sim2Data")) {
+//            tvSim2Data.setText(balance);
+//        } else {
+//
+//          //  Toast.makeText(getActivity(), "This is else", Toast.LENGTH_SHORT).show();
+//        }
+//       globalVariable.setClickedItem("");
+//    }
 
     private void initViews(View view) {
 
         dbb = AppDatabase.getInstance(getActivity());
+
+
 
         tvSim1Airtime = (TextView) view.findViewById(R.id.tv_AirtimeSim1);
         tvSim1Data = (TextView) view.findViewById(R.id.tv_DataSim1);
@@ -181,6 +237,85 @@ public class MainFragment extends Fragment {
 
         Sim1Layout = (LinearLayout) view.findViewById(R.id.Sim1Layout);
         Sim2Layout = (LinearLayout) view.findViewById(R.id.Sim2Layout);
+
+        btn_sim1UssdCodes = (FancyButton) view.findViewById(R.id.btn_sim1UssdCodes);
+        btn_sim2UssdCodes = (FancyButton) view.findViewById(R.id.btn_sim2UssdCodes);
+
+
+        cd_AirtimeSim1 = (CardView) view.findViewById(R.id. cd_AirtimeSim1);
+        cd_AirtimeSim2 = (CardView) view.findViewById(R.id. cd_AirtimeSim2);
+        cd_DataSim1 = (CardView) view.findViewById(R.id. cd_DataSim1);
+        cd_DataSim2 = (CardView) view.findViewById(R.id. cd_DataSim2);
+
+
+
+        tvSim1Airtime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String  SimIccid, SimName;
+                SimIccid = sharedPreferences.getString("SIM1ICCID", "");
+                SimName =  sharedPreferences.getString("SIM1NAME", "");
+
+                Intent intent = new Intent(getActivity(), BalanceActivity.class);
+                intent.putExtra("SimIccid", SimIccid);
+                intent.putExtra("Type", "Airtime");
+                intent.putExtra("SimName", SimName);
+                startActivity(intent);
+            }
+        });
+
+        tvSim2Airtime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String  SimIccid, SimName;
+                SimIccid = sharedPreferences.getString("SIM2ICCID", "");
+                SimName =  sharedPreferences.getString("SIM2NAME", "");
+
+                Intent intent = new Intent(getActivity(), BalanceActivity.class);
+                intent.putExtra("SimIccid", SimIccid);
+                intent.putExtra("Type", "Airtime");
+                intent.putExtra("SimName", SimName);
+                startActivity(intent);
+            }
+        });
+
+
+
+        tvSim1Data.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String  SimIccid, SimName;
+                SimIccid = sharedPreferences.getString("SIM1ICCID", "");
+                SimName =  sharedPreferences.getString("SIM1NAME", "");
+
+                Intent intent = new Intent(getActivity(), BalanceActivity.class);
+                intent.putExtra("SimIccid", SimIccid);
+                intent.putExtra("Type", "Data");
+                intent.putExtra("SimName", SimName);
+                startActivity(intent);
+            }
+        });
+
+
+
+        tvSim2Data.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String  SimIccid, SimName;
+                SimIccid = sharedPreferences.getString("SIM2ICCID", "");
+                SimName =  sharedPreferences.getString("SIM2NAME", "");;
+
+                Intent intent = new Intent(getActivity(), BalanceActivity.class);
+                intent.putExtra("SimIccid", SimIccid);
+                intent.putExtra("Type", "Data");
+                intent.putExtra("SimName", SimName);
+                startActivity(intent);
+            }
+        });
+
+
+
 
 
         refSim1Airtime.setOnClickListener(new View.OnClickListener() {
@@ -242,6 +377,125 @@ public class MainFragment extends Fragment {
 
             }
         });
+
+
+        btn_sim1UssdCodes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String SimName = sharedPreferences.getString("SIM1NAME", "");
+
+                Intent intent = new Intent(getActivity(), ListUssdActivity.class);
+                intent.putExtra("NetworkName", SimName);
+                intent.putExtra("SimNo", 0);
+                Toast.makeText(getActivity(), "SIm Name is" + SimName, Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+
+            }
+        });
+
+
+        btn_sim2UssdCodes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String SimName = sharedPreferences.getString("SIM2NAME", "");
+
+                Intent intent = new Intent(getActivity(), ListUssdActivity.class);
+                intent.putExtra("NetworkName", SimName);
+                intent.putExtra("SimNo", 1);
+                startActivity(intent);
+
+            }
+        });
+
+
+
+
+
+
+
+
+
+        balancemodel.getCurrentAirtimeBalanceSim1().observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String balance) {
+
+
+                //This is running multiple times
+                Toast.makeText(getContext(), "balance Airtime Sim1 "+balance, Toast.LENGTH_SHORT).show();
+                tvSim1Airtime.setText(balance);
+                updateNotification(balance, "Sim1Airtime");
+
+
+            }
+        });
+
+
+
+        balancemodel.getCurrentAirtimeBalanceSim2().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String balance) {
+
+
+                //This is running multiple times
+                Toast.makeText(getContext(), "balance Airtime Sim2 "+balance, Toast.LENGTH_SHORT).show();
+                tvSim2Airtime.setText(balance);
+                updateNotification(balance, "Sim2Airtime");
+
+
+            }
+        });
+
+        balancemodel.getCurrentDataBalanceSim1().observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String balance) {
+
+
+                //This is running multiple times
+                Toast.makeText(getContext(), "balance Data Sim1 "+balance, Toast.LENGTH_SHORT).show();
+                tvSim1Data.setText(balance);
+                updateNotification(balance, "Sim1Data");
+
+
+            }
+        });
+
+        balancemodel.getCurrentDataBalanceSim2().observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String balance) {
+
+
+                //This is running multiple times
+                Toast.makeText(getActivity(), "balance Data Sim2 "+balance, Toast.LENGTH_SHORT).show();
+                tvSim2Data.setText(balance);
+                updateNotification(balance, "Sim2Data");
+
+
+            }
+        });
+
+
+    }
+
+    private void updateNotification(String balance, String status) {
+
+      try {
+
+
+        if (status.equalsIgnoreCase("Sim1Airtime")) {
+            notificationlayout.setTextViewText(R.id.tv_airtime_sim1, "Airtime: " + balance);
+        } else if (status.equalsIgnoreCase("Sim2Airtime")) {
+            notificationlayout.setTextViewText(R.id.tv_airtime_sim2, "Airtime: " + balance);
+        } else if (status.equalsIgnoreCase("Sim1Data")) {
+            notificationlayout.setTextViewText(R.id.tv_data_sim1, "Airtime: " + balance);
+        } else if (status.equalsIgnoreCase("Sim2Data")) {
+            notificationlayout.setTextViewText(R.id.tv_data_sim2, "Airtime: " + balance);
+
+        }
+      } catch (Exception e) {
+
+      }
 
     }
 
@@ -313,18 +567,23 @@ public class MainFragment extends Fragment {
                     networklogo = R.drawable.airtel_logo;
                     ussdservice = "";
                //     Toast.makeText(getActivity(), "else else", Toast.LENGTH_SHORT).show();
+                    return;
                 }
                 if (!(ussd == null)) {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                      //   Toast.makeText(getActivity(), "Run Usssd =" + ussd, Toast.LENGTH_SHORT).show();
-                        methodsClass.DialUssdCodeNewApi(getActivity(), ussd, getActivity(), sim, "Balance Balance", Network, networklogo);
+                        globalVariable.setUssdservice(ussdservice);
+                        globalVariable.setIccid(SimIccid);
+                        Toast.makeText(getActivity(), "ussdservice" + ussdservice, Toast.LENGTH_SHORT).show();
+                        methodsClass.DialUssdCodeNewApi(getActivity(), ussd, getActivity(), sim, ussdservice, networklogo);
 
                     } else {
-                     //   Toast.makeText(getActivity(), "Run Usssd =" + ussd, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Run Usssd =" + ussd, Toast.LENGTH_SHORT).show();
 
 
                         methodsClass.DialUssdCode(getActivity(), ussd, getActivity(), sim);
                         globalVariable.setUssdservice(ussdservice);
+                        globalVariable.setIccid(SimIccid);
                     }
                 }
             }
@@ -351,7 +610,7 @@ public class MainFragment extends Fragment {
 
         }
 
-        Toast.makeText(getActivity(), "step 1", Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(getActivity(), "step 1", Toast.LENGTH_SHORT).show();
 
         int networklogo;
         String ussdservice;
@@ -372,7 +631,7 @@ public class MainFragment extends Fragment {
             Toast.makeText(getActivity(), "ask permission", Toast.LENGTH_SHORT).show();
         } else {
 
-            Toast.makeText(getActivity(), "dont ask permission", Toast.LENGTH_SHORT).show();
+        //    Toast.makeText(getActivity(), "dont ask permission", Toast.LENGTH_SHORT).show();
 
             if (SimName.equalsIgnoreCase("")
                     || (Sim1Iccid.equalsIgnoreCase(""))) {
@@ -384,7 +643,7 @@ public class MainFragment extends Fragment {
                 String ussd;
                 String Network = SimName;
 
-                Toast.makeText(getActivity(), SimName, Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getActivity(), SimName, Toast.LENGTH_SHORT).show();
 
                 if (Network.toLowerCase().contains("9mobile") || Network.toLowerCase().contains("etisalat")) {
                     ussd = "*228#";
@@ -410,7 +669,7 @@ public class MainFragment extends Fragment {
                 }
                 if (!(ussd == null)) {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                        methodsClass.DialUssdCodeNewApi(getActivity(), ussd, getActivity(), sim, "Balance Balance", Network, networklogo);
+                        methodsClass.DialUssdCodeNewApi(getActivity(), ussd, getActivity(), sim, ussdservice,  networklogo);
 
                     } else {
                         methodsClass.DialUssdCode(getActivity(), ussd, getActivity(), sim);
@@ -494,7 +753,16 @@ public class MainFragment extends Fragment {
     //method to enable accessibility service
     private void enableAccessibilityService() {
 
+
+        // load the customized_dialog.xml layout and inflate to view
+        LayoutInflater layoutinflater = LayoutInflater.from(getContext());
+        View customizedUserView = layoutinflater.inflate(R.layout.customized_dialog, null);
+
+
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+
+        alert.setView(customizedUserView);
+
 
         alert.setTitle("Tingtel");
         // alert.setMessage("Hello, We need you to enable accessibility settings for this app, so the app can read your ussd response popups and allow us serve you better");
@@ -517,6 +785,8 @@ public class MainFragment extends Fragment {
                 startActivity(intent);
 
 
+
+
             }
         });
 
@@ -527,5 +797,105 @@ public class MainFragment extends Fragment {
         return;
 
     }
+
+    private void ShowAirtimeNotification() {
+
+        //very important to create a notification channel in android 8 and above
+        CreateNotificationChannel();
+
+
+        notificationlayout = new RemoteViews(getActivity().getPackageName(), R.layout.notificationlayout);
+
+
+
+
+
+        Intent checkBalanceIntent = new Intent(getActivity(), UpdateAirtimeNotification.class);
+        checkBalanceIntent.setAction("update_airtime");
+//  checkBalanceIntent.putExtra(EXTRA_NOTIFICATION_ID, 0);
+        PendingIntent checkBalancePendingIntent =
+                PendingIntent.getBroadcast(getActivity(), 0, checkBalanceIntent, 0);
+
+
+        Intent checkBalanceSim1Intent = new Intent(getActivity(), MainActivity.class);
+        checkBalanceSim1Intent.putExtra("update_sim1_airtime", "update_sim1_airtime");
+//        PendingIntent psim1 = pendingIntent.getActivity(this, 0, checkBalanceSim1Intent, 0);
+        PendingIntent psim1 = PendingIntent.getActivity(getActivity(), 0, checkBalanceSim1Intent, 0);
+
+
+        Intent checkBalanceSim2Intent = new Intent(getActivity(), MainActivity.class);
+        checkBalanceSim2Intent.putExtra("update_sim2_airtime", "update_sim2_airtime");
+        PendingIntent psim2 = PendingIntent.getActivity(getActivity(), 0, checkBalanceSim2Intent, 0);
+
+
+
+       updateNotificationTextViews();
+
+
+        notificationlayout.setOnClickPendingIntent(R.id.btnSim1Airtime, psim1);
+
+        notificationlayout.setOnClickPendingIntent(R.id.btnSim2Airtime, psim2);
+
+
+        Nmanager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
+
+        builder = new NotificationCompat.Builder(getActivity(), "01")
+                .setSmallIcon(R.drawable.history)
+                .setCustomContentView(notificationlayout)
+                .setOngoing(true)
+                .setChannelId("01")
+                .setAutoCancel(true);
+
+
+        Nmanager.notify(01, builder.build());
+    }
+
+    public void updateNotificationTextViews() {
+
+        final String Sim1Iccid = sharedPreferences.getString("SIM1ICCID", "");
+        final String Sim2Iccid = sharedPreferences.getString("SIM2ICCID", "");
+
+        try {
+            notificationlayout.setTextViewText(R.id.tv_airtime_sim1, "Airtime: " + dbb.balanceDao().getLastAirtimeOrData(Sim1Iccid, "Airtime").getMessage());
+        } catch (Exception ex) {
+            Log.e("logmessage", "Exception CurrentAirtimeBalanceSim1 " + ex.getMessage());
+        }  try {
+
+            notificationlayout.setTextViewText(R.id.tv_data_sim1, "Data: " + dbb.balanceDao().getLastAirtimeOrData(Sim1Iccid, "Data").getMessage());
+        } catch (Exception ex) {
+            Log.e("logmessage", "Exception CurrentDataBalanceSim1 " + ex.getMessage());
+        }  try {
+
+
+            notificationlayout.setTextViewText(R.id.tv_airtime_sim2, "Airtime: " + dbb.balanceDao().getLastAirtimeOrData(Sim2Iccid, "Airtime").getMessage());
+        } catch (Exception ex) {
+            Log.e("logmessage", "Exception CurrentAirtimeBalanceSim2 " + ex.getMessage());
+        }  try {
+
+            notificationlayout.setTextViewText(R.id.tv_data_sim2, "Data: " + dbb.balanceDao().getLastAirtimeOrData(Sim2Iccid, "Data").getMessage());
+        } catch (Exception ex) {
+            Log.e("logmessage", "Exception CurrentAirtimeBalanceSim2 " + ex.getMessage());
+        }
+    }
+
+    private void CreateNotificationChannel() {
+
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Android 8 Notification Channel";
+            String description = "Android 8 Notification Channel Description";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("01", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getActivity().getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+    }
+
+
 
 }
