@@ -669,14 +669,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateBalance(String balance) {
 
-         Toast.makeText(MainActivity.this, "Click0" + globalVariable.getClickedItem() + globalVariable.getUssdservice() + balance, Toast.LENGTH_SHORT).show();
-        balanceViewModel.setCurrentAirtimeBalanceSim1("25f");
+
         String clickedItem = globalVariable.getClickedItem();
 
         FragmentManager fm = getSupportFragmentManager();
         MainFragment fragment =  (MainFragment) fm.findFragmentById(R.id.frame_container);
-        fragment.changeSim2DataTextView("fgh");
-        balance = "family";
+
+       
 
         if (clickedItem.equalsIgnoreCase("Sim1Airtime")) {
 
