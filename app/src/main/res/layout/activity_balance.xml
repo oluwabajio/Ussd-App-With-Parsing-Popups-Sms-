@@ -38,7 +38,7 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:context=".HistoryActivity"
-            tools:showIn="@layout/fragment_history">
+            tools:showIn="@layout/activity_balance">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -66,6 +66,7 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:paddingTop="10dp"
+                android:text="Clear"
                 android:layout_margin="@dimen/_10sdp"
                 />
 

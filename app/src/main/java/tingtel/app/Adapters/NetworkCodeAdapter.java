@@ -1,7 +1,9 @@
 package tingtel.app.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
@@ -126,7 +128,30 @@ public class NetworkCodeAdapter extends RecyclerView.Adapter<NetworkCodeAdapter.
 //                    view.getContext().startActivity(i);
                     Toast.makeText(context, cpu.getTitle(), Toast.LENGTH_SHORT).show();
                     Methods method = new Methods();
-                    method.DialUssdCode((ListUssdActivity)context, cpu.getCode(), context, SimNo);
+
+                    if (cpu.getCode().startsWith("*") && cpu.getCode().endsWith("#")) {
+
+                         method.DialUssdCode((ListUssdActivity)context, cpu.getCode(), context, SimNo);
+
+                    } else if (cpu.getCode().startsWith("text")) {
+
+//
+                        String[] fulltext = cpu.getCode().split("\\s+");
+
+                        String MessageTo = fulltext[fulltext.length-1];
+                        String[] fulltext2 = cpu.getCode().split("to");
+                        String[] fulltext3 = fulltext2[0].split("text");
+                        String Message = fulltext3[1].toString();
+
+                        Uri sms_uri = Uri.parse("smsto:"+Uri.encode(MessageTo));
+                        Intent sms_intent = new Intent(Intent.ACTION_SENDTO, sms_uri);
+                        sms_intent.putExtra("sms_body", Message);
+                        context.startActivity(sms_intent);
+//
+
+                    } else {
+
+                    }
 
 
 

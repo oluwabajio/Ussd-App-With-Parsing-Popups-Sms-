@@ -13,7 +13,8 @@ import android.widget.Button;
 import mehdi.sakout.fancybuttons.FancyButton;
 import tingtel.app.BalanceActivity;
 import tingtel.app.R;
-
+import tingtel.app.TransferAirtimeActivity;
+import tingtel.app.TransferHistoryActivity;
 
 
 public class TransferFragment extends Fragment {
@@ -48,6 +49,26 @@ public class TransferFragment extends Fragment {
                 getActivity().startActivity(intent);
             }
         });
+
+
+        btnNewTransfers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), TransferAirtimeActivity.class);
+                getActivity().startActivity(intent);
+            }
+        });
+
+        btnMyTransfers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), TransferHistoryActivity.class);
+                getActivity().startActivity(intent);
+            }
+        });
+
+
+
 
     }
 

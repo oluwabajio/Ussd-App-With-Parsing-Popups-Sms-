@@ -46,6 +46,7 @@ import tingtel.app.R;
 import tingtel.app.Services.USSDCODEService;
 import tingtel.app.Services.UpdateAirtimeNotification;
 import tingtel.app.ViewModels.BalanceViewModel;
+import tingtel.app.ViewModels.TransferAirtimeViewModel;
 
 import static android.Manifest.permission.CALL_PHONE;
 import static android.Manifest.permission.READ_PHONE_STATE;
@@ -55,6 +56,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class MainFragment extends Fragment {
 
     TextView tvSim1Airtime, tvSim2Airtime, tvSim1Data, tvSim2Data, tvSim1Network, tvSim2Network;
+    TextView ttt;
     ImageView refSim1Airtime, refSim2Airtime, refSim1Data, refSim2Data;
     LinearLayout Sim1Layout, Sim2Layout;
     FancyButton btn_sim1UssdCodes, btn_sim2UssdCodes;
@@ -78,14 +80,20 @@ public class MainFragment extends Fragment {
     private BalanceViewModel balancemodel;
 
 
-
+    View view;
     AppDatabase dbb;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view;
+
 
         view = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -104,6 +112,32 @@ public class MainFragment extends Fragment {
     }
 
 
+
+    public void changeSim1AirtimeTextView(String balance) {
+
+         tvSim1Airtime.setText(balance);
+
+    }
+
+    public void changeSim2AirtimeTextView(String balance) {
+
+        tvSim2Airtime.setText(balance);
+    }
+
+    public void changeSim1DataTextView(String balance) {
+
+        tvSim1Data.setText(balance);
+    }
+
+    public void changeSim2DataTextView(String balance) {
+
+        tvSim2Data.setText(balance);
+    }
+
+    public void changenothing(String balance) {
+
+        tvSim2Data.setText("nothing");
+    }
     private void loadExistingValues() {
 
 
@@ -216,8 +250,17 @@ public class MainFragment extends Fragment {
 
     private void initViews(View view) {
 
+        Toast.makeText(getActivity(), "lololo", Toast.LENGTH_SHORT).show();
+
         dbb = AppDatabase.getInstance(getActivity());
 
+         ttt = (TextView) view.findViewById(R.id.ttt) ;
+         ttt.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 ttt.setText("fff");
+             }
+         });
 
 
         tvSim1Airtime = (TextView) view.findViewById(R.id.tv_AirtimeSim1);
@@ -417,7 +460,7 @@ public class MainFragment extends Fragment {
 
 
 
-        balancemodel.getCurrentAirtimeBalanceSim1().observe(getActivity(), new Observer<String>() {
+        balancemodel.getCurrentAirtimeBalanceSim1().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String balance) {
 
@@ -429,6 +472,7 @@ public class MainFragment extends Fragment {
 
 
             }
+
         });
 
 
@@ -447,7 +491,7 @@ public class MainFragment extends Fragment {
             }
         });
 
-        balancemodel.getCurrentDataBalanceSim1().observe(getActivity(), new Observer<String>() {
+        balancemodel.getCurrentDataBalanceSim1().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String balance) {
 
@@ -461,7 +505,7 @@ public class MainFragment extends Fragment {
             }
         });
 
-        balancemodel.getCurrentDataBalanceSim2().observe(getActivity(), new Observer<String>() {
+        balancemodel.getCurrentDataBalanceSim2().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String balance) {
 
@@ -578,7 +622,7 @@ public class MainFragment extends Fragment {
                         methodsClass.DialUssdCodeNewApi(getActivity(), ussd, getActivity(), sim, ussdservice, networklogo);
 
                     } else {
-                    Toast.makeText(getActivity(), "Run Usssd =" + ussd, Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(getActivity(), "Run Usssd =" + ussd, Toast.LENGTH_SHORT).show();
 
 
                         methodsClass.DialUssdCode(getActivity(), ussd, getActivity(), sim);
@@ -896,6 +940,9 @@ public class MainFragment extends Fragment {
 
     }
 
-
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
 
 }

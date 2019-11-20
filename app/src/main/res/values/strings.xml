@@ -24,8 +24,9 @@
     <string name="description">Description</string>
     <string name="Code">Code</string>
     <string name="dial_code">Dial Code</string>
-    <string name="title_activity_beneficiary_add_fragment">BeneficiaryAddFragment</string>
-    <string name="title_activity_transfer_airtime">TransferAirtimeActivity</string>
-    <string name="title_activity_request_permission">RequestPermissionActivity</string>
+    <string name="title_activity_beneficiary_add_fragment">Beneficiary Add</string>
+    <string name="title_activity_transfer_airtime">Transfer Airtime</string>
+    <string name="title_activity_request_permission">Request Permission</string>
+    <string name="title_activity_transfer_history">History</string>
 
 </resources>

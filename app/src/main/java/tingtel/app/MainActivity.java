@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
@@ -44,6 +45,7 @@ import tingtel.app.Methods.Methods;
 import tingtel.app.Methods.MyApplication;
 import tingtel.app.Services.UpdateAirtimeNotification;
 import tingtel.app.ViewModels.BalanceViewModel;
+import tingtel.app.ViewModels.TransferAirtimeViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     NotificationCompat.Builder builder;
 
     BalanceViewModel balanceViewModel;
+    TransferAirtimeViewModel transferViewModel;
 
     MyApplication globalVariable;
 
@@ -82,6 +85,23 @@ public class MainActivity extends AppCompatActivity {
 
         ShowAirtimeNotification();
 
+       // balanceViewModel.setCurrentAirtimeBalanceSim1("nougat");
+
+
+
+        balanceViewModel.getCurrentAirtimeBalanceSim1().observe(MainActivity.this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String balance) {
+
+
+                //This is running multiple times
+                Toast.makeText(MainActivity.this, "balance Airtime Sim11 "+balance, Toast.LENGTH_SHORT).show();
+
+
+
+            }
+
+        });
 
 
 
@@ -119,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
          transferfragment = new TransferFragment();
          settingsfragment = new SettingsFragment();
 
+
+
     }
 
 
@@ -154,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_container, fragment);
-        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -211,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equalsIgnoreCase("SmsMessage")) {
 
-                Toast.makeText(MainActivity.this, "hhhh", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(MainActivity.this, "hhhh", Toast.LENGTH_SHORT).show();
                 final String message = intent.getStringExtra("message");
                 final String senderNum = intent.getStringExtra("senderNum");
 
@@ -400,7 +421,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
 
             String message = intent.getStringExtra("TingtelMessage");
-            Toast.makeText(context, "received" + message, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(context, "received" + message, Toast.LENGTH_SHORT).show();
 
             Log.e("logmessage", "2222222" + message);
 
@@ -447,8 +468,11 @@ public class MainActivity extends AppCompatActivity {
         String balance = "";
         String ServiceType = "";
 
-
         ussdservice = globalVariable.getUssdservice();
+
+        if (ussdservice == null) {
+            return;
+        }
 
         if (ussdservice.equalsIgnoreCase("mtn-airtime")){
             servicelogo = R.drawable.mtn_logo;
@@ -472,7 +496,7 @@ public class MainActivity extends AppCompatActivity {
                 globalVariable.setUssdservice("");
 
             } catch (Exception e) {
-
+                Toast.makeText(this, "Exception", Toast.LENGTH_SHORT).show();
             }
 
         }  else if (ussdservice.equalsIgnoreCase("glo-airtime")) {
@@ -511,6 +535,9 @@ public class MainActivity extends AppCompatActivity {
             ServiceType = "Airtime";
             Pattern pattern = Pattern.compile("N \\d+.\\d+");
             Matcher matcher = pattern.matcher(message);
+
+            Pattern pattern2 = Pattern.compile("N \\d+.\\d+");
+            Matcher matcher2 = pattern.matcher(message);
 
             if (matcher.find())
             {
@@ -642,33 +669,44 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateBalance(String balance) {
 
-        // Toast.makeText(getActivity(), "Click0" + globalVariable.getClickedItem() + globalVariable.getUssdservice() + balance, Toast.LENGTH_SHORT).show();
-
+         Toast.makeText(MainActivity.this, "Click0" + globalVariable.getClickedItem() + globalVariable.getUssdservice() + balance, Toast.LENGTH_SHORT).show();
+        balanceViewModel.setCurrentAirtimeBalanceSim1("25f");
         String clickedItem = globalVariable.getClickedItem();
+
+        FragmentManager fm = getSupportFragmentManager();
+        MainFragment fragment =  (MainFragment) fm.findFragmentById(R.id.frame_container);
+        fragment.changeSim2DataTextView("fgh");
+        balance = "family";
 
         if (clickedItem.equalsIgnoreCase("Sim1Airtime")) {
 
+            fragment.changeSim1AirtimeTextView(balance);
 
-            balanceViewModel.setCurrentAirtimeBalanceSim1(balance);
 
         } else if (clickedItem.equalsIgnoreCase("Sim2Airtime")) {
 
-
-            balanceViewModel.setCurrentAirtimeBalanceSim2(balance);
+            fragment.changeSim2AirtimeTextView(balance);
 
         }  else if (clickedItem.equalsIgnoreCase("Sim1Data")) {
 
-            balanceViewModel.setCurrentDataBalanceSim1(balance);
+            fragment.changeSim1DataTextView(balance);
 
         }  else if (clickedItem.equalsIgnoreCase("Sim2Data")) {
 
-            balanceViewModel.setCurrentDataBalanceSim2(balance);
+            fragment.changeSim2DataTextView(balance);
         } else {
-
-            //  Toast.makeText(getActivity(), "This is else", Toast.LENGTH_SHORT).show();
+            fragment.changeSim2DataTextView(balance);
+                  Toast.makeText(MainActivity.this, "This is else", Toast.LENGTH_SHORT).show();
         }
+
+        Toast.makeText(MainActivity.this, "Click1" + globalVariable.getClickedItem() + globalVariable.getUssdservice() + balance, Toast.LENGTH_SHORT).show();
+
         globalVariable.setClickedItem("");
     }
+
+
+
+
 
 
 

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".Fragments.BeneficiaryListFragment">
+
+
+    <LinearLayout
+        android:id="@+id/bottom_sheet_header"
+        android:layout_width="match_parent"
+        android:padding="@dimen/_5sdp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary">
+        <TextView
+            android:id="@+id/txt_networkname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:textSize="22dp"
+            android:text="Select Beneficiary"
+            android:layout_gravity="center_horizontal"/>
+    </LinearLayout>
+
+
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/btn_AddBeneficiary"
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:layout_margin="@dimen/_16sdp"
+        fancy:fb_borderColor="#FFFFFF"
+        fancy:fb_borderWidth="1dp"
+        fancy:fb_defaultColor="@color/colorLight"
+        fancy:fb_focusColor="@color/colorPrimary"
+        fancy:fb_iconPosition="left"
+        fancy:fb_radius="30dp"
+        fancy:fb_text="Add Beneficiary"
+        fancy:fb_textColor="#FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="33dp"
+        />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_beneficiary"
+        android:layout_margin="@dimen/_16sdp"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+
+
+
+</LinearLayout>

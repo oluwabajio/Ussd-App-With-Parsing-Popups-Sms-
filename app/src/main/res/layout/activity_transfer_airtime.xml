@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     tools:context=".TransferAirtimeActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -28,19 +29,60 @@
         tools:showIn="@layout/activity_transfer_airtime">
 
 
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="58dp"
+            android:weightSum="1"
+            android:id="@+id/radioGroup"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sim 1"
+                android:id="@+id/radioButton"
+                android:layout_gravity="center_horizontal"
+                android:checked="false"
+                android:textSize="25dp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sim 2"
+                android:id="@+id/radioButton2"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="22dp"
+                android:checked="false"
+                android:textSize="25dp"
+                android:layout_weight="0.13" />
+        </RadioGroup>
+
+
+
+
+        <TextView
+            android:id="@+id/tvAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:textColor="#000000"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+            android:text="Amount"/>
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/ed_amount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             android:hint="Enter Amount"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:inputType="number"
+            app:layout_constraintTop_toBottomOf="@+id/tvAmount" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline"
@@ -49,19 +91,56 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.1" />
 
+        <TextView
+            android:id="@+id/tvPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:textColor="#000000"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/ed_amount"
+            android:text="Phone Number"/>
+
         <EditText
-            android:id="@+id/editText3"
+            android:id="@+id/ed_phone_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="33dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:inputType="number"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/editText"
+            app:layout_constraintTop_toBottomOf="@+id/tvPhone"
             android:hint="Enter Phone Number"/>
+
+<TextView
+    android:id="@+id/tv_chooseBeneficiary"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintEnd_toStartOf="@+id/guideline2"
+    app:layout_constraintTop_toBottomOf="@+id/ed_phone_number"
+    android:text="Choose Beneficiary"
+    android:textStyle="bold"
+    android:textColor="@color/colorPrimary"/>
+
+        <TextView
+            android:id="@+id/tvPin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:textColor="#000000"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/ed_phone_number"
+            android:text="Pin"/>
+
+
+        <EditText
+            android:id="@+id/ed_pin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="numberPassword"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/tvPin"
+            android:hint="Enter PIN"/>
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline2"
@@ -70,19 +149,26 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.9" />
 
-        <Button
-            android:id="@+id/button"
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            fancy:fb_borderColor="#FFFFFF"
+            fancy:fb_borderWidth="1dp"
+            fancy:fb_defaultColor="@color/colorLight"
+            fancy:fb_focusColor="@color/colorPrimary"
+            fancy:fb_iconPosition="left"
+            fancy:fb_radius="30dp"
+            fancy:fb_text="Transfer"
+            fancy:fb_textColor="#FFFFFF"
+            android:id="@+id/btn_transfer"
             android:layout_width="0dp"
-            android:layout_height="51dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="33dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:text="Button"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/editText3" />
+            app:layout_constraintTop_toBottomOf="@+id/ed_pin" />
     </android.support.constraint.ConstraintLayout>
 
 

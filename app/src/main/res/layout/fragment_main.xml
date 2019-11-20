@@ -335,10 +335,17 @@
                 fancy:fb_text="Ussd Codes"
                 fancy:fb_textColor="#FFFFFF" />
 
-
+            <TextView
+                android:id="@+id/ttt"
+                android:layout_marginTop="@dimen/_33sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ttt"/>
         </LinearLayout>
 
     </LinearLayout>
+
+
 
 
 </FrameLayout>

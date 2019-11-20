@@ -20,7 +20,6 @@ public class Balance {
     
     String Message;
 
-
     Date date;
 
     float balance;

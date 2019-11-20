@@ -2,6 +2,7 @@ package tingtel.app.ViewModels;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 public class BalanceViewModel extends ViewModel {
 
@@ -30,7 +31,9 @@ public class BalanceViewModel extends ViewModel {
     public MutableLiveData<String> getCurrentDataBalanceSim1() {
         if (currentDataBalanceSim1 == null) {
             currentDataBalanceSim1 = new MutableLiveData<String>();
+            Log.e("logmessage", "null null");
         }
+        Log.e("logmessage", "not null");
         return currentDataBalanceSim1;
     }
 

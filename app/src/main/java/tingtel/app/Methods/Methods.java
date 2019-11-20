@@ -459,7 +459,7 @@ public class Methods {
                     final String iccid = subscriptionInfo.getIccId();
                     final String subscriptionInfoNumber = subscriptionInfo.getNumber();
 
-                    Toast.makeText(activity, "" + mnc + mcc, Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(activity, "" + mnc + mcc, Toast.LENGTH_SHORT).show();
 
                     if (mcc == 621) {
                         carrierNameList.add(carrierName);
