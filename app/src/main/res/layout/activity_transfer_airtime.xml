@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     tools:context=".TransferAirtimeActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -30,39 +30,37 @@
 
 
         <RadioGroup
+            android:id="@+id/radioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="58dp"
-            android:weightSum="1"
-            android:id="@+id/radioGroup"
             android:orientation="horizontal"
+            android:weightSum="1"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <RadioButton
+                android:id="@+id/radioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sim 1"
-                android:id="@+id/radioButton"
                 android:layout_gravity="center_horizontal"
                 android:checked="false"
-                android:textSize="25dp" />
+                android:text="Sim 1"
+                android:textColor="@color/tingtel_bg_color"
+                android:textSize="15dp" />
 
             <RadioButton
+                android:id="@+id/radioButton2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sim 2"
-                android:id="@+id/radioButton2"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="22dp"
+                android:layout_weight="0.13"
                 android:checked="false"
-                android:textSize="25dp"
-                android:layout_weight="0.13" />
+                android:text="Sim 2"
+                android:textSize="15dp" />
         </RadioGroup>
-
-
 
 
         <TextView
@@ -70,18 +68,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
+            android:text="Amount"
             android:textColor="#000000"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroup"
-            android:text="Amount"/>
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
         <EditText
             android:id="@+id/ed_amount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
             android:hint="Enter Amount"
             android:inputType="number"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/tvAmount" />
 
         <android.support.constraint.Guideline
@@ -96,51 +95,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
+            android:text="Phone Number"
             android:textColor="#000000"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/ed_amount"
-            android:text="Phone Number"/>
+            app:layout_constraintTop_toBottomOf="@+id/ed_amount" />
 
         <EditText
             android:id="@+id/ed_phone_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:hint="Enter Phone Number"
             android:inputType="number"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/tvPhone"
-            android:hint="Enter Phone Number"/>
+            app:layout_constraintTop_toBottomOf="@+id/tvPhone" />
 
-<TextView
-    android:id="@+id/tv_chooseBeneficiary"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:layout_constraintEnd_toStartOf="@+id/guideline2"
-    app:layout_constraintTop_toBottomOf="@+id/ed_phone_number"
-    android:text="Choose Beneficiary"
-    android:textStyle="bold"
-    android:textColor="@color/colorPrimary"/>
+        <TextView
+            android:id="@+id/tv_chooseBeneficiary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose Beneficiary"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/ed_phone_number" />
 
         <TextView
             android:id="@+id/tvPin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
+            android:text="Pin"
             android:textColor="#000000"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/ed_phone_number"
-            android:text="Pin"/>
+            app:layout_constraintTop_toBottomOf="@+id/ed_phone_number" />
 
 
         <EditText
             android:id="@+id/ed_pin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:hint="Enter PIN"
             android:inputType="numberPassword"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/tvPin"
-            android:hint="Enter PIN"/>
+            app:layout_constraintTop_toBottomOf="@+id/tvPin" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline2"
@@ -150,10 +149,17 @@
             app:layout_constraintGuide_percent="0.9" />
 
         <mehdi.sakout.fancybuttons.FancyButton
-            android:paddingBottom="10dp"
+            android:id="@+id/btn_transfer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="33dp"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp"
             android:paddingTop="10dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/ed_pin"
             fancy:fb_borderColor="#FFFFFF"
             fancy:fb_borderWidth="1dp"
             fancy:fb_defaultColor="@color/colorLight"
@@ -161,16 +167,8 @@
             fancy:fb_iconPosition="left"
             fancy:fb_radius="30dp"
             fancy:fb_text="Transfer"
-            fancy:fb_textColor="#FFFFFF"
-            android:id="@+id/btn_transfer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="33dp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/ed_pin" />
+            fancy:fb_textColor="#FFFFFF" />
     </android.support.constraint.ConstraintLayout>
-
 
 
 </android.support.design.widget.CoordinatorLayout>

@@ -5,4 +5,5 @@
     <color name="colorAccent">#656565</color>
     <color name="colorLight">#E9736A</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="tingtel_bg_color">#E64405</color>
 </resources>

@@ -138,9 +138,6 @@ public class MainFragment extends Fragment {
         tvSim2Data.setText("nothing");
     }
     private void loadExistingValues() {
-
-
-
         final String Sim1Iccid = sharedPreferences.getString("SIM1ICCID", "");
         final String Sim2Iccid = sharedPreferences.getString("SIM2ICCID", "");
 
@@ -262,7 +259,6 @@ public class MainFragment extends Fragment {
         tvSim2Airtime = (TextView) view.findViewById(R.id.tv_AirtimeSim2);
         tvSim2Data = (TextView) view.findViewById(R.id.tv_DataSim2);
         tvSim2Network = (TextView) view.findViewById(R.id.tv_sim2network);
-
 
 
         refSim1Airtime = (ImageView) view.findViewById(R.id.ref_AirtimeSim1);
