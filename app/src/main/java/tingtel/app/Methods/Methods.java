@@ -146,7 +146,7 @@ public class Methods {
                         progressDialog.dismiss();
 
                         Log.e("logmessage", "success sim 2 : " + response.toString());
-                        showPopupBox(response.toString(), activity);
+                        //showPopupBox(response.toString(), activity);
 
                         try {
 //                            tv.setText(response.toString());
@@ -214,7 +214,7 @@ public class Methods {
                             progressDialog.dismiss();
                             // Toast.makeText(context, "success sim 2" + response.toString(), Toast.LENGTH_SHORT).show();
                             Log.e("logmessage", "success sim 2" + response.toString());
-                            showPopupBox(response.toString(), activity);
+                            //showPopupBox(response.toString(), activity);
 
                             try {
                              //   tv.setText(response.toString());

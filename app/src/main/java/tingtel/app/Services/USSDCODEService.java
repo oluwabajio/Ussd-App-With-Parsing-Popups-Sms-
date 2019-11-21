@@ -52,11 +52,11 @@ public class USSDCODEService extends AccessibilityService {
         if( TextUtils.isEmpty(text) ) return;
 
         // Close dialog
-       //  performGlobalAction(GLOBAL_ACTION_BACK); // This works on 4.1+ only
+         performGlobalAction(GLOBAL_ACTION_BACK); // This works on 4.1+ only
 
         Log.d(TAG, text);
         // Handle USSD response here
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+     //   Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 
 
         sendMessageToActivity(text);

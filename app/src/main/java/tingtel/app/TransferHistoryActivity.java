@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ public class TransferHistoryActivity extends AppCompatActivity {
     RecyclerView Rv_Balance;
     public static RecyclerView.Adapter adapter;
 
+    TextView tvNoRecords;
+
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     
@@ -52,6 +55,9 @@ public class TransferHistoryActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        tvNoRecords = (TextView) findViewById(R.id.tv_NoRecord);
+        tvNoRecords.setVisibility(View.INVISIBLE);
 
         sharedPreferences = getSharedPreferences("TingTelPref", 0);
         editor = sharedPreferences.edit();
@@ -75,6 +81,12 @@ public class TransferHistoryActivity extends AppCompatActivity {
                 //            .build();
                 items.clear();
                 items = appdatabase.transferDao().getAllItems();
+
+                if (items.size() <= 0) {
+                    tvNoRecords.setVisibility(View.VISIBLE);
+                } else {
+                    tvNoRecords.setVisibility(View.INVISIBLE);
+                }
 
 
                 TransferHistoryActivity.this.runOnUiThread(new Runnable() {

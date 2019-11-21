@@ -56,7 +56,6 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class MainFragment extends Fragment {
 
     TextView tvSim1Airtime, tvSim2Airtime, tvSim1Data, tvSim2Data, tvSim1Network, tvSim2Network;
-    TextView ttt;
     ImageView refSim1Airtime, refSim2Airtime, refSim1Data, refSim2Data;
     LinearLayout Sim1Layout, Sim2Layout;
     FancyButton btn_sim1UssdCodes, btn_sim2UssdCodes;
@@ -250,17 +249,11 @@ public class MainFragment extends Fragment {
 
     private void initViews(View view) {
 
-        Toast.makeText(getActivity(), "lololo", Toast.LENGTH_SHORT).show();
+     //   Toast.makeText(getActivity(), "lololo", Toast.LENGTH_SHORT).show();
 
         dbb = AppDatabase.getInstance(getActivity());
 
-         ttt = (TextView) view.findViewById(R.id.ttt) ;
-         ttt.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 ttt.setText("fff");
-             }
-         });
+
 
 
         tvSim1Airtime = (TextView) view.findViewById(R.id.tv_AirtimeSim1);
@@ -621,6 +614,7 @@ public class MainFragment extends Fragment {
                         Toast.makeText(getActivity(), "ussdservice" + ussdservice, Toast.LENGTH_SHORT).show();
                         methodsClass.DialUssdCodeNewApi(getActivity(), ussd, getActivity(), sim, ussdservice, networklogo);
 
+
                     } else {
                   //  Toast.makeText(getActivity(), "Run Usssd =" + ussd, Toast.LENGTH_SHORT).show();
 
@@ -709,10 +703,11 @@ public class MainFragment extends Fragment {
                     ussd = null;
                     networklogo = R.drawable.airtel_logo;
                     ussdservice = "";
-                    Toast.makeText(getActivity(), "else else", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getActivity(), "else else", Toast.LENGTH_SHORT).show();
                 }
                 if (!(ussd == null)) {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        globalVariable.setIccid(SimIccid);
                         methodsClass.DialUssdCodeNewApi(getActivity(), ussd, getActivity(), sim, ussdservice,  networklogo);
 
                     } else {

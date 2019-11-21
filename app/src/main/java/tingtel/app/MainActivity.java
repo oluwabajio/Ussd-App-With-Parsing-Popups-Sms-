@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //This is running multiple times
-                Toast.makeText(MainActivity.this, "balance Airtime Sim11 "+balance, Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(MainActivity.this, "balance Airtime Sim11 "+balance, Toast.LENGTH_SHORT).show();
 
 
 
@@ -161,10 +161,10 @@ public class MainActivity extends AppCompatActivity {
                     toolbar.setTitle("Transfer");
                     loadFragment(transferfragment);
                     return true;
-                case R.id.navigation_settings:
-                    toolbar.setTitle("Settings");
-                    loadFragment(settingsfragment);
-                    return true;
+//                case R.id.navigation_settings:
+//                    toolbar.setTitle("Settings");
+//                    loadFragment(settingsfragment);
+//                    return true;
 
             }
             return false;
@@ -270,14 +270,14 @@ public class MainActivity extends AppCompatActivity {
 
                 } else if ((senderNum.equalsIgnoreCase("9mobile")) && ((message.toLowerCase().contains("your data balance as at")) || (message.toLowerCase().contains("you have")) || (message.toLowerCase().contains("your monthly data")) || (message.toLowerCase().contains("valid till")) )) {
 
-                   Toast.makeText(MainActivity.this, "bbbbn" + message, Toast.LENGTH_SHORT).show();
+                //   Toast.makeText(MainActivity.this, "bbbbn" + message, Toast.LENGTH_SHORT).show();
                     servicename = "Data Balance";
                     simname = "9Mobile";
                     serviceLogo = R.drawable.nmobile_logo;
 
                     ServiceType = "Data";
 
-                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
 
 
                     Pattern pattern = Pattern.compile("\\d+[Mm][Bb]");
@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (matcher.find())
                     {
-                        Toast.makeText(MainActivity.this, matcher.group(0), Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(MainActivity.this, matcher.group(0), Toast.LENGTH_SHORT).show();
                         balance = matcher.group(0);
 
                     } else if (matcher2.find()) {
@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     else {
-                        Toast.makeText(MainActivity.this, "not found" + message, Toast.LENGTH_SHORT).show();
+                      //  Toast.makeText(MainActivity.this, "not found" + message, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -319,14 +319,14 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if ((senderNum.equalsIgnoreCase("9mobile")) && (message.toLowerCase().contains("main bal:"))) {
 
-                    Toast.makeText(MainActivity.this, "bbbbn" + message, Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(MainActivity.this, "bbbbn" + message, Toast.LENGTH_SHORT).show();
                     servicename = "Airtime Balance";
                     simname = "9Mobile";
                     serviceLogo = R.drawable.nmobile_logo;
 
                     ServiceType = "Airtime";
 
-                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                //    Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
 
 
                     Pattern pattern = Pattern.compile("N\\s\\d+.\\d+");
@@ -339,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (matcher.find())
                     {
-                        Toast.makeText(MainActivity.this, matcher.group(0), Toast.LENGTH_SHORT).show();
+                   //     Toast.makeText(MainActivity.this, matcher.group(0), Toast.LENGTH_SHORT).show();
                         balance = matcher.group(0);
 
                     }  else {
@@ -354,7 +354,46 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                else if ((senderNum.equalsIgnoreCase("Airtel")) && (message.toLowerCase().contains("Your have"))) {
+
+                else if ((senderNum.equalsIgnoreCase("Airtel")) && (message.toLowerCase().contains("your balances are"))) {
+
+                    servicename = "Airtime Balance";
+                    simname = "Airtel";
+                    serviceLogo = R.drawable.nmobile_logo;
+
+                    ServiceType = "Data";
+
+               //     Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+
+
+                    Pattern pattern = Pattern.compile("\\d+MB");
+                    Matcher matcher = pattern.matcher(message);
+
+
+
+
+                    String balance = "";
+
+                    if (matcher.find())
+                    {
+                     //   Toast.makeText(MainActivity.this, matcher.group(0), Toast.LENGTH_SHORT).show();
+                        balance = matcher.group(0);
+
+                    }  else {
+                      //  Toast.makeText(MainActivity.this, "not found" + message, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+
+
+                    updateBalance(balance);
+                    saveHistory(balance, simname, message, R.drawable.nmobile_logo, ServiceType);
+
+                }
+
+
+
+                else if ((senderNum.equalsIgnoreCase("Airtel")) && (message.toLowerCase().contains("you have"))) {
 
 
                     servicename = "Data Balance";
@@ -372,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
                 else if ((senderNum.equalsIgnoreCase("Airtel")) && (message.toLowerCase().contains("you do not have an active data plan"))) {
 
 
-                    Toast.makeText(MainActivity.this, "vvf", Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(MainActivity.this, "vvf", Toast.LENGTH_SHORT).show();
                     servicename = "Data Balance";
                     simname = "Airtel";
 
@@ -397,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                Log.e("logmessage", simiccid);
+
 
 
                 Intent intent1 = new Intent(MainActivity.this, ShowMessage.class);
@@ -405,7 +444,7 @@ public class MainActivity extends AppCompatActivity {
                 intent1.putExtra("senderNum", senderNum);
 
             } else {
-                Toast.makeText(MainActivity.this, "ddddk", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "ddddk", Toast.LENGTH_SHORT).show();
                    Log.e("sms", "not received");
 
               //  return;
@@ -485,12 +524,12 @@ public class MainActivity extends AppCompatActivity {
                 Matcher matcher = pattern.matcher(message);
                 if (matcher.find())
                 {
-                    Toast.makeText(this, matcher.group(0), Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(this, matcher.group(0), Toast.LENGTH_SHORT).show();
                     balance = matcher.group(0);
                     updateBalance(balance);
                     saveHistory(balance, simname, message, servicelogo, ServiceType);;
                 } else {
-                    Toast.makeText(this, "not foundjj", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "not found", Toast.LENGTH_SHORT).show();
                 }
 
                 globalVariable.setUssdservice("");
@@ -517,7 +556,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (matcher.find())
             {
-                Toast.makeText(this, matcher.group(0), Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(this, matcher.group(0), Toast.LENGTH_SHORT).show();
                 balance = matcher.group(0);
                 updateBalance(balance);
                 saveHistory(balance, simname, message, servicelogo, ServiceType);;
@@ -541,7 +580,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (matcher.find())
             {
-                Toast.makeText(this, matcher.group(0), Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(this, matcher.group(0), Toast.LENGTH_SHORT).show();
                 balance = matcher.group(0);
                 updateBalance(balance);
                 saveHistory(balance, simname, message, servicelogo, ServiceType);
@@ -651,14 +690,21 @@ public class MainActivity extends AppCompatActivity {
         String simiccid = globalVariable.getIccid();
         Log.e("logmessage", simiccid + balance);
 
+
+
         String Amount =  balance.replaceAll("[^0-9.]", "");
 
         Float fAmount = Float.valueOf(Amount.trim());
 
 
-        Toast.makeText(this, "amount is " + fAmount, Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, "amount is " + fAmount + simiccid + balance + ServiceType, Toast.LENGTH_SHORT).show();
          methodsClass.SaveAirtimeOrData(getApplicationContext(), fAmount, simiccid,  simname, balance, servicelogo, ServiceType);
 
+
+        FragmentManager fm = getSupportFragmentManager();
+        MainFragment fragment =  (MainFragment) fm.findFragmentById(R.id.frame_container);
+
+        fragment.updateNotificationTextViews();
 
 
 
@@ -675,7 +721,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         MainFragment fragment =  (MainFragment) fm.findFragmentById(R.id.frame_container);
 
-       
+
 
         if (clickedItem.equalsIgnoreCase("Sim1Airtime")) {
 
@@ -695,10 +741,10 @@ public class MainActivity extends AppCompatActivity {
             fragment.changeSim2DataTextView(balance);
         } else {
             fragment.changeSim2DataTextView(balance);
-                  Toast.makeText(MainActivity.this, "This is else", Toast.LENGTH_SHORT).show();
+           //       Toast.makeText(MainActivity.this, "This is else", Toast.LENGTH_SHORT).show();
         }
 
-        Toast.makeText(MainActivity.this, "Click1" + globalVariable.getClickedItem() + globalVariable.getUssdservice() + balance, Toast.LENGTH_SHORT).show();
+     //   Toast.makeText(MainActivity.this, "Click1" + globalVariable.getClickedItem() + globalVariable.getUssdservice() + balance, Toast.LENGTH_SHORT).show();
 
         globalVariable.setClickedItem("");
     }

@@ -11,10 +11,10 @@
         android:icon="@drawable/beneficiary"
         android:title="@string/title_transfer" />
 
-    <item
-        android:id="@+id/navigation_settings"
-        android:icon="@drawable/settings"
-        android:title="@string/title_settings" />
+    <!--<item-->
+        <!--android:id="@+id/navigation_settings"-->
+        <!--android:icon="@drawable/settings"-->
+        <!--android:title="@string/title_settings" />-->
 
 
 </menu>

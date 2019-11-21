@@ -46,13 +46,14 @@
             android:layout_below="@+id/tv_airtime_sim1"
             style="@style/TextAppearance.Compat.Notification.Title"
             />
-        <ImageButton
+        <Button
             android:id="@+id/btnSim1Airtime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/refresh_black_36x36"
+
             android:layout_alignParentEnd="true"
             android:background="#ffffff"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_22sdp"
+            android:text="Open"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"/>
 
@@ -91,11 +92,11 @@
             android:layout_below="@+id/tv_airtime_sim2"
             style="@style/TextAppearance.Compat.Notification.Title"
             />
-        <ImageButton
+        <Button
             android:id="@+id/btnSim2Airtime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/refresh_black_36x36"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_22sdp"
+            android:text="Open"
             android:layout_alignParentEnd="true"
             android:background="#ffffff"
             android:layout_centerVertical="true"

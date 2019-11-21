@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import mehdi.sakout.fancybuttons.FancyButton;
 import tingtel.app.Adapters.BalanceAdapter;
 import tingtel.app.Methods.AppDatabase;
 import tingtel.app.Methods.Methods;
@@ -50,7 +51,7 @@ public class BalanceActivity extends AppCompatActivity {
     List<Balance> items = new ArrayList<>();
     RecyclerView Rv_Balance;
     public static RecyclerView.Adapter adapter;
-    Button btnClear;
+    FancyButton btnClear;
     Spinner spNetworks;
     int REQUEST_PHONE_STATE = 101;
     int i = 0;
@@ -85,7 +86,7 @@ public class BalanceActivity extends AppCompatActivity {
 
         appdatabase = AppDatabase.getDatabaseInstance(BalanceActivity.this);
         Rv_Balance = (RecyclerView) findViewById(R.id.rv_history);
-        btnClear = (Button)findViewById(R.id.btnClear);
+        btnClear = (FancyButton)findViewById(R.id.btnClear);
         spNetworks = (Spinner) findViewById(R.id.sp_networks);
 
 
@@ -195,6 +196,8 @@ public class BalanceActivity extends AppCompatActivity {
             spNetworks.setAdapter(networkArray);
 
             spNetworks.setSelection(networkArray.getCount()-1);
+
+            Log.e("logmessage", "spinnerpopulated");
         }
 
 
