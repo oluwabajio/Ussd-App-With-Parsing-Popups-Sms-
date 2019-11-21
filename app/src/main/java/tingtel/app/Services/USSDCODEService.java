@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.List;
@@ -66,13 +65,10 @@ public class USSDCODEService extends AccessibilityService {
 
 
     private void sendMessageToActivity(String msg) {
-
-
         Intent intent = new Intent("TintelIntentMessage");
         // You can also include some extra data.
         intent.putExtra("TingtelMessage", msg);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
     }
 
 

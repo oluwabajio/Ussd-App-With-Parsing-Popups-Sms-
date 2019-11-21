@@ -28,7 +28,6 @@ import java.util.List;
 
 import tingtel.app.MainActivity;
 import tingtel.app.Models.Balance;
-import tingtel.app.R;
 import tingtel.app.RequestPermissionActivity;
 
 import static android.Manifest.permission.READ_PHONE_STATE;
@@ -111,10 +110,6 @@ public class Methods {
 //        if (progressDialog != null && progressDialog.isShowing()) {
 //            return;
 //        }
-
-
-
-
 
         //isnt running
         progressDialog.show();

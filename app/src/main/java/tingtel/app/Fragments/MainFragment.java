@@ -13,9 +13,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RemoteViews;
@@ -33,6 +34,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import tingtel.app.BalanceActivity;
@@ -46,7 +48,6 @@ import tingtel.app.R;
 import tingtel.app.Services.USSDCODEService;
 import tingtel.app.Services.UpdateAirtimeNotification;
 import tingtel.app.ViewModels.BalanceViewModel;
-import tingtel.app.ViewModels.TransferAirtimeViewModel;
 
 import static android.Manifest.permission.CALL_PHONE;
 import static android.Manifest.permission.READ_PHONE_STATE;
@@ -58,6 +59,8 @@ public class MainFragment extends Fragment {
     TextView tvSim1Airtime, tvSim2Airtime, tvSim1Data, tvSim2Data, tvSim1Network, tvSim2Network;
     ImageView refSim1Airtime, refSim2Airtime, refSim1Data, refSim2Data;
     LinearLayout Sim1Layout, Sim2Layout;
+    private ImageView networkLogoSim1, networkLogoSim2;
+    private Button customerSupportButton1, customerSupportButton2;
     FancyButton btn_sim1UssdCodes, btn_sim2UssdCodes;
     CardView cd_AirtimeSim1, cd_AirtimeSim2, cd_DataSim1, cd_DataSim2;
 
@@ -93,28 +96,44 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-
         view = inflater.inflate(R.layout.fragment_main, container, false);
 
         initObjects(view);
         initViews(view);
 
-      //  populateViews(view);
+        //  populateViews(view);
 
         getSimcardDetails();
         loadExistingValues();
 
         ShowAirtimeNotification();
 
+        balancemodel.getCurrentAirtimeBalanceSim1().observe(Objects.requireNonNull(getActivity()), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String balance) {
+                tvSim1Airtime.setText(balance);
+                updateNotification(balance, "Sim1Airtime");
+            }
+        });
 
         return view;
     }
 
 
-
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void changeSim1AirtimeTextView(String balance) {
 
-         tvSim1Airtime.setText(balance);
+        balancemodel.getCurrentAirtimeBalanceSim1().observe(Objects.requireNonNull(getActivity()), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String balance) {
+                tvSim1Airtime.setText(balance);
+                updateNotification(balance, "Sim1Airtime");
+            }
+        });
+
+
+        // tvSim1Airtime.setText(balance);
+
 
     }
 
@@ -137,6 +156,7 @@ public class MainFragment extends Fragment {
 
         tvSim2Data.setText("nothing");
     }
+
     private void loadExistingValues() {
         final String Sim1Iccid = sharedPreferences.getString("SIM1ICCID", "");
         final String Sim2Iccid = sharedPreferences.getString("SIM2ICCID", "");
@@ -178,19 +198,25 @@ public class MainFragment extends Fragment {
         String Sim1Network = sharedPreferences.getString("SIM1NAME", "");
         String Sim2Network = sharedPreferences.getString("SIM2NAME", "");
 
-      //  Toast.makeText(getActivity(), "fall "+ Sim1Network + Sim2Network + NoOfSIm, Toast.LENGTH_SHORT).show();
+        //  Toast.makeText(getActivity(), "fall "+ Sim1Network + Sim2Network + NoOfSIm, Toast.LENGTH_SHORT).show();
 
         if (NoOfSIm.equalsIgnoreCase("NOSIM")) {
 
 
-
         } else if (NoOfSIm.equalsIgnoreCase("SIM1")) {
-
+            switch (Sim1Network) {
+                case "Mtn ng":
+                    networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.mtn_logo));
+                    break;
+                case "Airtel":
+                    networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.airtel_logo));
+                    break;
+            }
             Sim1Layout.setVisibility(View.VISIBLE);
             Sim2Layout.setVisibility(View.GONE);
             tvSim1Network.setText(Sim1Network);
 
-        } else  if (NoOfSIm.equalsIgnoreCase("SIM1SIM2")) {
+        } else if (NoOfSIm.equalsIgnoreCase("SIM1SIM2")) {
 
             Sim1Layout.setVisibility(View.VISIBLE);
             Sim2Layout.setVisibility(View.VISIBLE);
@@ -209,10 +235,6 @@ public class MainFragment extends Fragment {
         globalVariable = (MyApplication) getActivity().getApplicationContext();
 
         balancemodel = ViewModelProviders.of(getActivity()).get(BalanceViewModel.class);
-
-
-
-
 
 
     }
@@ -246,12 +268,12 @@ public class MainFragment extends Fragment {
 
     private void initViews(View view) {
 
-     //   Toast.makeText(getActivity(), "lololo", Toast.LENGTH_SHORT).show();
+        //   Toast.makeText(getActivity(), "lololo", Toast.LENGTH_SHORT).show();
 
         dbb = AppDatabase.getInstance(getActivity());
 
-
-
+        networkLogoSim1 = view.findViewById(R.id.network_logo_image);
+        networkLogoSim2 = view.findViewById(R.id.network_logo_image1);
 
         tvSim1Airtime = (TextView) view.findViewById(R.id.tv_AirtimeSim1);
         tvSim1Data = (TextView) view.findViewById(R.id.tv_DataSim1);
@@ -274,19 +296,20 @@ public class MainFragment extends Fragment {
         btn_sim2UssdCodes = (FancyButton) view.findViewById(R.id.btn_sim2UssdCodes);
 
 
-        cd_AirtimeSim1 = (CardView) view.findViewById(R.id. cd_AirtimeSim1);
-        cd_AirtimeSim2 = (CardView) view.findViewById(R.id. cd_AirtimeSim2);
-        cd_DataSim1 = (CardView) view.findViewById(R.id. cd_DataSim1);
-        cd_DataSim2 = (CardView) view.findViewById(R.id. cd_DataSim2);
+        cd_AirtimeSim1 = (CardView) view.findViewById(R.id.cd_AirtimeSim1);
+        cd_AirtimeSim2 = (CardView) view.findViewById(R.id.cd_AirtimeSim2);
+        cd_DataSim1 = (CardView) view.findViewById(R.id.cd_DataSim1);
+        cd_DataSim2 = (CardView) view.findViewById(R.id.cd_DataSim2);
 
-
+        customerSupportButton1 = view.findViewById(R.id.supportButtonOne);
+        customerSupportButton2 = view.findViewById(R.id.supportButtonTwo);
 
         tvSim1Airtime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String  SimIccid, SimName;
+                String SimIccid, SimName;
                 SimIccid = sharedPreferences.getString("SIM1ICCID", "");
-                SimName =  sharedPreferences.getString("SIM1NAME", "");
+                SimName = sharedPreferences.getString("SIM1NAME", "");
 
                 Intent intent = new Intent(getActivity(), BalanceActivity.class);
                 intent.putExtra("SimIccid", SimIccid);
@@ -300,9 +323,9 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                String  SimIccid, SimName;
+                String SimIccid, SimName;
                 SimIccid = sharedPreferences.getString("SIM2ICCID", "");
-                SimName =  sharedPreferences.getString("SIM2NAME", "");
+                SimName = sharedPreferences.getString("SIM2NAME", "");
 
                 Intent intent = new Intent(getActivity(), BalanceActivity.class);
                 intent.putExtra("SimIccid", SimIccid);
@@ -313,13 +336,12 @@ public class MainFragment extends Fragment {
         });
 
 
-
         tvSim1Data.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String  SimIccid, SimName;
+                String SimIccid, SimName;
                 SimIccid = sharedPreferences.getString("SIM1ICCID", "");
-                SimName =  sharedPreferences.getString("SIM1NAME", "");
+                SimName = sharedPreferences.getString("SIM1NAME", "");
 
                 Intent intent = new Intent(getActivity(), BalanceActivity.class);
                 intent.putExtra("SimIccid", SimIccid);
@@ -328,15 +350,15 @@ public class MainFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
 
 
         tvSim2Data.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String  SimIccid, SimName;
+                String SimIccid, SimName;
                 SimIccid = sharedPreferences.getString("SIM2ICCID", "");
-                SimName =  sharedPreferences.getString("SIM2NAME", "");;
+                SimName = sharedPreferences.getString("SIM2NAME", "");
+                ;
 
                 Intent intent = new Intent(getActivity(), BalanceActivity.class);
                 intent.putExtra("SimIccid", SimIccid);
@@ -345,9 +367,6 @@ public class MainFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-
-
 
 
         refSim1Airtime.setOnClickListener(new View.OnClickListener() {
@@ -372,13 +391,12 @@ public class MainFragment extends Fragment {
                 //request airtime
                 String SimName = sharedPreferences.getString("SIM2NAME", "");
                 String SimIccid = sharedPreferences.getString("SIM2ICCID", "");
-                requestAirtime(1,SimName, SimIccid);
+                requestAirtime(1, SimName, SimIccid);
 
                 globalVariable.setClickedItem("Sim2Airtime");
 
             }
         });
-
 
 
         refSim1Data.setOnClickListener(new View.OnClickListener() {
@@ -388,7 +406,7 @@ public class MainFragment extends Fragment {
                 //request airtime
                 String SimName = sharedPreferences.getString("SIM1NAME", "");
                 String SimIccid = sharedPreferences.getString("SIM1ICCID", "");
-                requestData(0,SimName, SimIccid);
+                requestData(0, SimName, SimIccid);
 
                 globalVariable.setClickedItem("Sim1Data");
 
@@ -403,7 +421,7 @@ public class MainFragment extends Fragment {
                 //request airtime
                 String SimName = sharedPreferences.getString("SIM2NAME", "");
                 String SimIccid = sharedPreferences.getString("SIM2ICCID", "");
-                requestData(1,SimName, SimIccid);
+                requestData(1, SimName, SimIccid);
 
                 globalVariable.setClickedItem("Sim2Data");
 
@@ -442,11 +460,18 @@ public class MainFragment extends Fragment {
         });
 
 
-
-
-
-
-
+        customerSupportButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Support One clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+        customerSupportButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Support Two clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         balancemodel.getCurrentAirtimeBalanceSim1().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -455,7 +480,7 @@ public class MainFragment extends Fragment {
 
 
                 //This is running multiple times
-                Toast.makeText(getContext(), "balance Airtime Sim1 "+balance, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "balance Airtime Sim1 " + balance, Toast.LENGTH_SHORT).show();
                 tvSim1Airtime.setText(balance);
                 updateNotification(balance, "Sim1Airtime");
 
@@ -465,14 +490,13 @@ public class MainFragment extends Fragment {
         });
 
 
-
         balancemodel.getCurrentAirtimeBalanceSim2().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String balance) {
 
 
                 //This is running multiple times
-                Toast.makeText(getContext(), "balance Airtime Sim2 "+balance, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "balance Airtime Sim2 " + balance, Toast.LENGTH_SHORT).show();
                 tvSim2Airtime.setText(balance);
                 updateNotification(balance, "Sim2Airtime");
 
@@ -486,7 +510,7 @@ public class MainFragment extends Fragment {
 
 
                 //This is running multiple times
-                Toast.makeText(getContext(), "balance Data Sim1 "+balance, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "balance Data Sim1 " + balance, Toast.LENGTH_SHORT).show();
                 tvSim1Data.setText(balance);
                 updateNotification(balance, "Sim1Data");
 
@@ -500,7 +524,7 @@ public class MainFragment extends Fragment {
 
 
                 //This is running multiple times
-                Toast.makeText(getActivity(), "balance Data Sim2 "+balance, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "balance Data Sim2 " + balance, Toast.LENGTH_SHORT).show();
                 tvSim2Data.setText(balance);
                 updateNotification(balance, "Sim2Data");
 
@@ -513,30 +537,27 @@ public class MainFragment extends Fragment {
 
     private void updateNotification(String balance, String status) {
 
-      try {
+        try {
 
 
-        if (status.equalsIgnoreCase("Sim1Airtime")) {
-            notificationlayout.setTextViewText(R.id.tv_airtime_sim1, "Airtime: " + balance);
-        } else if (status.equalsIgnoreCase("Sim2Airtime")) {
-            notificationlayout.setTextViewText(R.id.tv_airtime_sim2, "Airtime: " + balance);
-        } else if (status.equalsIgnoreCase("Sim1Data")) {
-            notificationlayout.setTextViewText(R.id.tv_data_sim1, "Airtime: " + balance);
-        } else if (status.equalsIgnoreCase("Sim2Data")) {
-            notificationlayout.setTextViewText(R.id.tv_data_sim2, "Airtime: " + balance);
+            if (status.equalsIgnoreCase("Sim1Airtime")) {
+                notificationlayout.setTextViewText(R.id.tv_airtime_sim1, "Airtime: " + balance);
+            } else if (status.equalsIgnoreCase("Sim2Airtime")) {
+                notificationlayout.setTextViewText(R.id.tv_airtime_sim2, "Airtime: " + balance);
+            } else if (status.equalsIgnoreCase("Sim1Data")) {
+                notificationlayout.setTextViewText(R.id.tv_data_sim1, "Airtime: " + balance);
+            } else if (status.equalsIgnoreCase("Sim2Data")) {
+                notificationlayout.setTextViewText(R.id.tv_data_sim2, "Airtime: " + balance);
+
+            }
+        } catch (Exception e) {
 
         }
-      } catch (Exception e) {
-
-      }
 
     }
 
 
     private void requestAirtime(int sim, String SimName, String SimIccid) {
-
-
-
         //check if android version is below android o
         if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.O) {
             //check Accessibility Service Status whether enable or not
@@ -547,7 +568,7 @@ public class MainFragment extends Fragment {
 
         }
 
-       // Toast.makeText(getActivity(), "step 1", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(getActivity(), "step 1", Toast.LENGTH_SHORT).show();
 
         int networklogo;
         String ussdservice;
@@ -562,15 +583,15 @@ public class MainFragment extends Fragment {
 
             ActivityCompat.requestPermissions(getActivity(), new String[]{READ_PHONE_STATE, RECEIVE_SMS, CALL_PHONE}, REQUEST_PHONE_STATE);
 
-       //     Toast.makeText(getActivity(), "ask permission", Toast.LENGTH_SHORT).show();
+            //     Toast.makeText(getActivity(), "ask permission", Toast.LENGTH_SHORT).show();
         } else {
 
-          //  Toast.makeText(getActivity(), "dont ask permission", Toast.LENGTH_SHORT).show();
+            //  Toast.makeText(getActivity(), "dont ask permission", Toast.LENGTH_SHORT).show();
 
             if (SimName.equalsIgnoreCase("")
                     || (SimIccid.equalsIgnoreCase(""))) {
 
-            //    Toast.makeText(getActivity(), "No Sim Card Detected", Toast.LENGTH_SHORT).show();
+                //    Toast.makeText(getActivity(), "No Sim Card Detected", Toast.LENGTH_SHORT).show();
 
             } else {
 
@@ -599,12 +620,12 @@ public class MainFragment extends Fragment {
                     ussd = null;
                     networklogo = R.drawable.airtel_logo;
                     ussdservice = "";
-               //     Toast.makeText(getActivity(), "else else", Toast.LENGTH_SHORT).show();
+                    //     Toast.makeText(getActivity(), "else else", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (!(ussd == null)) {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                     //   Toast.makeText(getActivity(), "Run Usssd =" + ussd, Toast.LENGTH_SHORT).show();
+                        //   Toast.makeText(getActivity(), "Run Usssd =" + ussd, Toast.LENGTH_SHORT).show();
                         globalVariable.setUssdservice(ussdservice);
                         globalVariable.setIccid(SimIccid);
                         Toast.makeText(getActivity(), "ussdservice" + ussdservice, Toast.LENGTH_SHORT).show();
@@ -612,7 +633,7 @@ public class MainFragment extends Fragment {
 
 
                     } else {
-                  //  Toast.makeText(getActivity(), "Run Usssd =" + ussd, Toast.LENGTH_SHORT).show();
+                        //  Toast.makeText(getActivity(), "Run Usssd =" + ussd, Toast.LENGTH_SHORT).show();
 
 
                         methodsClass.DialUssdCode(getActivity(), ussd, getActivity(), sim);
@@ -624,14 +645,10 @@ public class MainFragment extends Fragment {
         }
 
 
-
-
     }
 
 
-
     private void requestData(int sim, String SimName, String SimIccid) {
-
 
 
         //check if android version is below android o
@@ -644,7 +661,7 @@ public class MainFragment extends Fragment {
 
         }
 
-      //  Toast.makeText(getActivity(), "step 1", Toast.LENGTH_SHORT).show();
+        //  Toast.makeText(getActivity(), "step 1", Toast.LENGTH_SHORT).show();
 
         int networklogo;
         String ussdservice;
@@ -652,7 +669,6 @@ public class MainFragment extends Fragment {
 
         String Sim1Iccid = sharedPreferences.getString("SIM1ICCID", "");
         String Sim2Iccid = sharedPreferences.getString("SIM2ICCID", "");
-
 
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED
@@ -665,7 +681,7 @@ public class MainFragment extends Fragment {
             Toast.makeText(getActivity(), "ask permission", Toast.LENGTH_SHORT).show();
         } else {
 
-        //    Toast.makeText(getActivity(), "dont ask permission", Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(getActivity(), "dont ask permission", Toast.LENGTH_SHORT).show();
 
             if (SimName.equalsIgnoreCase("")
                     || (Sim1Iccid.equalsIgnoreCase(""))) {
@@ -677,7 +693,7 @@ public class MainFragment extends Fragment {
                 String ussd;
                 String Network = SimName;
 
-             //   Toast.makeText(getActivity(), SimName, Toast.LENGTH_SHORT).show();
+                //   Toast.makeText(getActivity(), SimName, Toast.LENGTH_SHORT).show();
 
                 if (Network.toLowerCase().contains("9mobile") || Network.toLowerCase().contains("etisalat")) {
                     ussd = "*228#";
@@ -699,23 +715,21 @@ public class MainFragment extends Fragment {
                     ussd = null;
                     networklogo = R.drawable.airtel_logo;
                     ussdservice = "";
-                   // Toast.makeText(getActivity(), "else else", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getActivity(), "else else", Toast.LENGTH_SHORT).show();
                 }
                 if (!(ussd == null)) {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                         globalVariable.setIccid(SimIccid);
-                        methodsClass.DialUssdCodeNewApi(getActivity(), ussd, getActivity(), sim, ussdservice,  networklogo);
+                        methodsClass.DialUssdCodeNewApi(getActivity(), ussd, getActivity(), sim, ussdservice, networklogo);
 
                     } else {
                         methodsClass.DialUssdCode(getActivity(), ussd, getActivity(), sim);
-                         globalVariable.setUssdservice(ussdservice);
-                         globalVariable.setIccid(SimIccid);
+                        globalVariable.setUssdservice(ussdservice);
+                        globalVariable.setIccid(SimIccid);
                     }
                 }
             }
         }
-
-
 
 
     }
@@ -751,13 +765,11 @@ public class MainFragment extends Fragment {
     }
 
 
-
     //To check Accessibility Service Status
-    public boolean isAccessServiceEnabled(Context context, Class accessibilityServiceClass)
-    {
+    public boolean isAccessServiceEnabled(Context context, Class accessibilityServiceClass) {
         String prefString = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
 
-        return prefString!= null && prefString.contains(context.getPackageName() + "/" + accessibilityServiceClass.getName());
+        return prefString != null && prefString.contains(context.getPackageName() + "/" + accessibilityServiceClass.getName());
     }
 
 
@@ -820,8 +832,6 @@ public class MainFragment extends Fragment {
                 startActivity(intent);
 
 
-
-
             }
         });
 
@@ -842,9 +852,6 @@ public class MainFragment extends Fragment {
         notificationlayout = new RemoteViews(getActivity().getPackageName(), R.layout.notificationlayout);
 
 
-
-
-
         Intent checkBalanceIntent = new Intent(getActivity(), UpdateAirtimeNotification.class);
         checkBalanceIntent.setAction("update_airtime");
 //  checkBalanceIntent.putExtra(EXTRA_NOTIFICATION_ID, 0);
@@ -863,8 +870,7 @@ public class MainFragment extends Fragment {
         PendingIntent psim2 = PendingIntent.getActivity(getActivity(), 0, checkBalanceSim2Intent, 0);
 
 
-
-       updateNotificationTextViews();
+        updateNotificationTextViews();
 
 
         notificationlayout.setOnClickPendingIntent(R.id.btnSim1Airtime, psim1);
@@ -894,18 +900,21 @@ public class MainFragment extends Fragment {
             notificationlayout.setTextViewText(R.id.tv_airtime_sim1, "Airtime: " + dbb.balanceDao().getLastAirtimeOrData(Sim1Iccid, "Airtime").getMessage());
         } catch (Exception ex) {
             Log.e("logmessage", "Exception CurrentAirtimeBalanceSim1 " + ex.getMessage());
-        }  try {
+        }
+        try {
 
             notificationlayout.setTextViewText(R.id.tv_data_sim1, "Data: " + dbb.balanceDao().getLastAirtimeOrData(Sim1Iccid, "Data").getMessage());
         } catch (Exception ex) {
             Log.e("logmessage", "Exception CurrentDataBalanceSim1 " + ex.getMessage());
-        }  try {
+        }
+        try {
 
 
             notificationlayout.setTextViewText(R.id.tv_airtime_sim2, "Airtime: " + dbb.balanceDao().getLastAirtimeOrData(Sim2Iccid, "Airtime").getMessage());
         } catch (Exception ex) {
             Log.e("logmessage", "Exception CurrentAirtimeBalanceSim2 " + ex.getMessage());
-        }  try {
+        }
+        try {
 
             notificationlayout.setTextViewText(R.id.tv_data_sim2, "Data: " + dbb.balanceDao().getLastAirtimeOrData(Sim2Iccid, "Data").getMessage());
         } catch (Exception ex) {
@@ -932,7 +941,7 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
     }
 

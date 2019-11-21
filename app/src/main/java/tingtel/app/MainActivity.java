@@ -3,7 +3,6 @@ package tingtel.app;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
@@ -17,28 +16,22 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-import tingtel.app.Adapters.BalanceAdapter;
 import tingtel.app.Fragments.MainFragment;
 import tingtel.app.Fragments.SettingsFragment;
 import tingtel.app.Fragments.TransferFragment;
@@ -292,10 +285,8 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
-
                     updateBalance(balance);
                     saveHistory(balance, simname, message, R.drawable.nmobile_logo, ServiceType);
-                    ;
 
                 } else if ((senderNum.equalsIgnoreCase("9mobile")) && (message.toLowerCase().contains("main bal:"))) {
 
@@ -354,8 +345,6 @@ public class MainActivity extends AppCompatActivity {
                         //  Toast.makeText(MainActivity.this, "not found" + message, Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-
                     updateBalance(balance + " MB");
                     saveHistory(balance + " MB", simname, message, R.drawable.nmobile_logo, ServiceType);
 
@@ -383,6 +372,14 @@ public class MainActivity extends AppCompatActivity {
                 } else if ((senderNum.equalsIgnoreCase("131"))
                         && (message.toLowerCase().contains("you don't have any active"))) {
                     //  Toast.makeText(MainActivity.this, "vvf", Toast.LENGTH_SHORT).show();
+                    servicename = "Data Balance";
+                    simname = "Mtn";
+                    ServiceType = "Data";
+                    String balance = "0 Mb";
+                    updateBalance(balance);
+                    saveHistory(balance, simname, message, R.drawable.mtn_logo, ServiceType);
+                } else if ((senderNum.equalsIgnoreCase("Mtn"))
+                        && (message.toLowerCase().contains("you don't have any active"))) {
                     servicename = "Data Balance";
                     simname = "Mtn";
                     ServiceType = "Data";
@@ -477,7 +474,8 @@ public class MainActivity extends AppCompatActivity {
                 if (!balance.equals("")) {
                     if (balance.endsWith(".")
                             || balance.endsWith("!")
-                            || balance.endsWith(":")) {
+                            || balance.endsWith(":")
+                            || balance.endsWith(";")) {
                         balance = balance.substring(0, balance.length() - 1);
 
                         updateBalance(getResources().getString(R.string.naira) + balance);
@@ -685,8 +683,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (clickedItem.equalsIgnoreCase("Sim1Airtime")) {
+            balanceViewModel.setCurrentAirtimeBalanceSim1(balance);
 
-            fragment.changeSim1AirtimeTextView(balance);
+            //fragment.changeSim1AirtimeTextView(balance);
 
         } else if (clickedItem.equalsIgnoreCase("Sim2Airtime")) {
 

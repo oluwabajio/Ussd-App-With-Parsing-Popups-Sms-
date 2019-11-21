@@ -7,25 +7,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:layout_gravity="center"
-    android:gravity="center"
     android:orientation="vertical"
     tools:context=".Fragments.MainFragment">
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="0dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="15dp"
+        android:layout_weight="0.5"
         android:text="Welcome! Kate Hudson"
         android:textColor="#524706"
-
         android:textSize="22sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:background="#1BCFB18D"
+        android:layout_weight="4"
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -36,11 +35,16 @@
         <LinearLayout
             android:id="@+id/Sim1Layout"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/network_logo_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                tools:src ="@drawable/mtn_logo" />
 
             <TextView
                 android:id="@+id/tv_sim1network"
@@ -179,18 +183,23 @@
                 fancy:fb_text="View more codes from MTN"
                 fancy:fb_textColor="#FFFFFF" />
 
+
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/Sim2Layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
 
-
+            <ImageView
+                android:id="@+id/network_logo_image1"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                tools:src ="@drawable/airtel_logo" />
             <TextView
                 android:id="@+id/tv_sim2network"
                 android:layout_width="match_parent"
@@ -331,8 +340,30 @@
                 fancy:fb_textColor="#FFFFFF" />
 
         </LinearLayout>
-
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="180dp"
+        android:layout_weight="0.7"
+        android:orientation="horizontal">
 
+        <Button
+            android:id="@+id/supportButtonOne"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:text="Get Support" />
+
+        <Button
+            android:id="@+id/supportButtonTwo"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:text="Get Support" />
+    </LinearLayout>
 </LinearLayout>
