@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import mehdi.sakout.fancybuttons.FancyButton;
 import tingtel.app.BalanceActivity;
 import tingtel.app.ListUssdActivity;
@@ -59,7 +60,7 @@ public class MainFragment extends Fragment {
     TextView tvSim1Airtime, tvSim2Airtime, tvSim1Data, tvSim2Data, tvSim1Network, tvSim2Network;
     ImageView refSim1Airtime, refSim2Airtime, refSim1Data, refSim2Data;
     LinearLayout Sim1Layout, Sim2Layout;
-    private ImageView networkLogoSim1, networkLogoSim2;
+    private CircleImageView networkLogoSim1, networkLogoSim2;
     private Button customerSupportButton1, customerSupportButton2;
     FancyButton btn_sim1UssdCodes, btn_sim2UssdCodes;
     CardView cd_AirtimeSim1, cd_AirtimeSim2, cd_DataSim1, cd_DataSim2;
@@ -91,6 +92,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -191,8 +193,9 @@ public class MainFragment extends Fragment {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void getSimcardDetails() {
-        methodsClass.getCarrierOfSim(getActivity());
+        methodsClass.getCarrierOfSim(Objects.requireNonNull(getActivity()));
 
         String NoOfSIm = sharedPreferences.getString(SimStatus, "");
         String Sim1Network = sharedPreferences.getString("SIM1NAME", "");
@@ -200,28 +203,63 @@ public class MainFragment extends Fragment {
 
         //  Toast.makeText(getActivity(), "fall "+ Sim1Network + Sim2Network + NoOfSIm, Toast.LENGTH_SHORT).show();
 
-        if (NoOfSIm.equalsIgnoreCase("NOSIM")) {
+        if (Objects.requireNonNull(NoOfSIm).equalsIgnoreCase("NOSIM")) {
 
 
         } else if (NoOfSIm.equalsIgnoreCase("SIM1")) {
             switch (Sim1Network) {
-                case "Mtn ng":
+                case "MTN NG":
                     networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.mtn_logo));
                     break;
-                case "Airtel":
+                case "Airtel NG":
                     networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.airtel_logo));
                     break;
             }
             Sim1Layout.setVisibility(View.VISIBLE);
             Sim2Layout.setVisibility(View.GONE);
-            tvSim1Network.setText(Sim1Network);
+            //tvSim1Network.setText(Sim1Network);
 
         } else if (NoOfSIm.equalsIgnoreCase("SIM1SIM2")) {
 
+
+            switch (Sim1Network) {
+                case "MTN NG":
+                    networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.mtn_logo));
+                    break;
+                case "Airtel NG":
+                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.airtel_logo));
+                    break;
+                case "9mobile":
+                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
+                    break;
+                case "Etisalat":
+                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
+                    break;
+                case "Glo Ng":
+                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.glo_logo));
+                    break;
+            }
+            switch (Sim2Network) {
+                case "MTN NG":
+                    networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.mtn_logo));
+                    break;
+                case "Airtel NG":
+                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.airtel_logo));
+                    break;
+                case "9mobile":
+                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
+                    break;
+                case "Etisalat":
+                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
+                    break;
+                case "Glo Ng":
+                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.glo_logo));
+                    break;
+            }
             Sim1Layout.setVisibility(View.VISIBLE);
             Sim2Layout.setVisibility(View.VISIBLE);
-            tvSim1Network.setText(Sim1Network);
-            tvSim2Network.setText(Sim2Network);
+            //tvSim1Network.setText(Sim1Network);
+            //tvSim2Network.setText(Sim2Network);
 
         }
 
@@ -267,9 +305,6 @@ public class MainFragment extends Fragment {
 //    }
 
     private void initViews(View view) {
-
-        //   Toast.makeText(getActivity(), "lololo", Toast.LENGTH_SHORT).show();
-
         dbb = AppDatabase.getInstance(getActivity());
 
         networkLogoSim1 = view.findViewById(R.id.network_logo_image);
@@ -277,24 +312,21 @@ public class MainFragment extends Fragment {
 
         tvSim1Airtime = (TextView) view.findViewById(R.id.tv_AirtimeSim1);
         tvSim1Data = (TextView) view.findViewById(R.id.tv_DataSim1);
-        tvSim1Network = (TextView) view.findViewById(R.id.tv_sim1network);
+        //tvSim1Network = (TextView) view.findViewById(R.id.tv_sim1network);
         tvSim2Airtime = (TextView) view.findViewById(R.id.tv_AirtimeSim2);
         tvSim2Data = (TextView) view.findViewById(R.id.tv_DataSim2);
-        tvSim2Network = (TextView) view.findViewById(R.id.tv_sim2network);
-
+        //tvSim2Network = (TextView) view.findViewById(R.id.tv_sim2network);
 
         refSim1Airtime = (ImageView) view.findViewById(R.id.ref_AirtimeSim1);
         refSim1Data = (ImageView) view.findViewById(R.id.ref_DataSim1);
         refSim2Airtime = (ImageView) view.findViewById(R.id.ref_AirtimeSim2);
         refSim2Data = (ImageView) view.findViewById(R.id.ref_DataSim2);
 
-
         Sim1Layout = (LinearLayout) view.findViewById(R.id.Sim1Layout);
         Sim2Layout = (LinearLayout) view.findViewById(R.id.Sim2Layout);
 
         btn_sim1UssdCodes = (FancyButton) view.findViewById(R.id.btn_sim1UssdCodes);
         btn_sim2UssdCodes = (FancyButton) view.findViewById(R.id.btn_sim2UssdCodes);
-
 
         cd_AirtimeSim1 = (CardView) view.findViewById(R.id.cd_AirtimeSim1);
         cd_AirtimeSim2 = (CardView) view.findViewById(R.id.cd_AirtimeSim2);
