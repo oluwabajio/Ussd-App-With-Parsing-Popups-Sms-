@@ -3,32 +3,22 @@ package tingtel.app;
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,7 +27,6 @@ import tingtel.app.Adapters.BalanceAdapter;
 import tingtel.app.Methods.AppDatabase;
 import tingtel.app.Methods.Methods;
 import tingtel.app.Models.Balance;
-import tingtel.app.R;
 
 import static android.Manifest.permission.CALL_PHONE;
 import static android.Manifest.permission.READ_PHONE_STATE;
@@ -188,19 +177,12 @@ public class BalanceActivity extends AppCompatActivity {
 
 
         } else {
-
             String[] NetworkArray = methodsClass.DetectSimCards(BalanceActivity.this);
-
-
             ArrayAdapter<String> networkArray = new ArrayAdapter<String>(BalanceActivity.this,R.layout.spinner_item, NetworkArray);
             spNetworks.setAdapter(networkArray);
-
             spNetworks.setSelection(networkArray.getCount()-1);
-
             Log.e("logmessage", "spinnerpopulated");
         }
-
-
     }
 
 

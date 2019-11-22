@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,7 +13,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
@@ -35,8 +33,6 @@ import static android.Manifest.permission.READ_PHONE_STATE;
 public class Methods {
 
 
-
-
     MyApplication globalVariable;
     int REQUEST_PHONE_CALL = 101;
     int REQUEST_READ_PHONE_STATE = 105;
@@ -55,17 +51,11 @@ public class Methods {
 //    MainActivity mainActivity = new MainActivity();
 
 
-
-
-
-
     public void DialUssdCode(Activity a, String UssdCode, Context context, int simno) {
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             //if android version doesnt require permission
             DialCode(UssdCode, context, simno);
         } else {
-
             //if permission is not enable, ask for permission
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(a, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
@@ -81,22 +71,14 @@ public class Methods {
 
 
     void DialCode(String UssdCode, Context context, int simno) {
-
-
         if (UssdCode != "nil") {
-
             //check if it begins and ends with #
-
             if (UssdCode.startsWith("*") && UssdCode.endsWith("#")) {
                 UssdCode = UssdCode.substring(1, UssdCode.length() - 1);
             }
-
             //remove
-
             String ussdCode = "*" + UssdCode + Uri.encode("#");
-
             Intent intent = new Intent("android.intent.action.CALL", Uri.parse("tel:" + ussdCode));
-
             intent.putExtra("com.android.phone.extra.slot", simno); //For sim 1
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
@@ -106,66 +88,28 @@ public class Methods {
 
     public void DialUssdCodeNewApi(final Activity activity, String UssdCode, final Context context, int simno, final String servicename, final int networklogo) {
         progressDialog = new ProgressDialog(context);
-//        final TextView tv = (TextView) activity.findViewById(R.id.txtPopupMessage);
-//        if (progressDialog != null && progressDialog.isShowing()) {
-//            return;
-//        }
-
-        //isnt running
         progressDialog.show();
         progressDialog.setCancelable(false);
-        // Setting Title
         progressDialog.setTitle("Ussd Running");
         progressDialog.setMessage("Ussd Running");
 
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         Handler handler = new Handler();
-
         TelephonyManager.UssdResponseCallback responseCallback = null;
-
         //if sim 1 is clicked
-        if (simno ==  0) {
-
-
+        if (simno == 0) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-
-
-
-
                 responseCallback = new TelephonyManager.UssdResponseCallback() {
                     @Override
                     public void onReceiveUssdResponse(TelephonyManager telephonyManager, String request, CharSequence response) {
                         super.onReceiveUssdResponse(telephonyManager, request, response);
-
                         //Dismiss the dialog
                         progressDialog.dismiss();
-
                         Log.e("logmessage", "success sim 2 : " + response.toString());
-                        //showPopupBox(response.toString(), activity);
-
-                        try {
-//                            tv.setText(response.toString());
-                        } catch (Exception e) {
-
-                        }
-
-
                         // saveHistoryMethod(response.toString(), activity);
                         if (!servicename.equalsIgnoreCase("")) {
-                            //save history
-                        //    SaveHistory(activity, Integer.parseInt("3"), simname, servicename, response.toString(), networklogo);
-
-                            ((MainActivity)context).checkPopupandSave(response.toString());
-
-                        } else {
-                            return;
+                            ((MainActivity) context).checkPopupandSave(response.toString());
                         }
-//                        Toast.makeText(context, "success" + response.toString(), Toast.LENGTH_SHORT).show();
-//                        Intent intent = new Intent(activity, ShowMessage.class);
-//                        intent.putExtra("message", response.toString());
-//                        activity.startActivity(intent);
-//
-
                     }
 
                     @Override
@@ -184,119 +128,43 @@ public class Methods {
                 } else {
                     Toast.makeText(activity, "not granted", Toast.LENGTH_SHORT).show();
                 }
-
-
-
             }
             //if sim 2 is clicked
-        }else {
-
+        } else {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 SubscriptionManager localSubscriptionManager = SubscriptionManager.from(context);
                 if (localSubscriptionManager.getActiveSubscriptionInfoCount() > 1) {
                     //if there are two sims in dual sim mobile
                     List localList = localSubscriptionManager.getActiveSubscriptionInfoList();
                     SubscriptionInfo simInfo2 = (SubscriptionInfo) localList.get(1);
-
                     TelephonyManager manager2 = telephonyManager.createForSubscriptionId(simInfo2.getSubscriptionId());
-
                     responseCallback = new TelephonyManager.UssdResponseCallback() {
                         @Override
                         public void onReceiveUssdResponse(TelephonyManager telephonyManager, String request, CharSequence response) {
                             super.onReceiveUssdResponse(telephonyManager, request, response);
-
                             //Dismiss the dialog
                             progressDialog.dismiss();
-                            // Toast.makeText(context, "success sim 2" + response.toString(), Toast.LENGTH_SHORT).show();
                             Log.e("logmessage", "success sim 2" + response.toString());
-                            //showPopupBox(response.toString(), activity);
 
-                            try {
-                             //   tv.setText(response.toString());
-                            } catch (Exception e) {
-
-                            }
-                            //save history
                             if (!servicename.equalsIgnoreCase("")) {
-                                //save history
-                              //  SaveHistory(activity, Integer.parseInt("3"), simname, servicename, response.toString(), networklogo);
-                                ((MainActivity)context).checkPopupandSave(response.toString());
-
-                            } else {
-                                return;
+                                ((MainActivity) context).checkPopupandSave(response.toString());
                             }
-
                         }
 
                         @Override
                         public void onReceiveUssdResponseFailed(TelephonyManager telephonyManager, String request, int failureCode) {
                             super.onReceiveUssdResponseFailed(telephonyManager, request, failureCode);
-
                             //Dismiss the dialog
                             progressDialog.dismiss();
                             Toast.makeText(context, "failed: Error " + String.valueOf(failureCode), Toast.LENGTH_SHORT).show();
                         }
                     };
-
                     manager2.sendUssdRequest(UssdCode, responseCallback, new Handler());
                 }
             }
         }
 
     }
-
-//    private void saveHistoryMethod(String response, Activity activity) {
-//
-//        String servicename = "";
-//        String simname = "";
-//
-//        int bankLogoo = R.drawable.history;
-//
-//        if (response.contains("Main Bal:")){
-//            //this is airtel check airtime balance
-//            servicename = "Balance Balance";
-//            simname = "Airtel";
-//            bankLogoo = R.drawable.airtel_logo;
-//        } else if (response.toLowerCase().contains("recharge was successful")){
-//            //this is airtel load recharge
-//            servicename = "Recharge";
-//            simname = "Airtel";
-//            bankLogoo = R.drawable.airtel_logo;
-//        } else if(response.) {
-//
-//        }
-//
-//        else {
-//            return;
-//        }
-//
-//        //save history
-//        SaveHistory(activity, Integer.parseInt("3"), simname,  servicename, response, bankLogoo);
-//    }
-
-    private void showPopupBox(String response, Activity activity) {
-
-        AlertDialog.Builder alert = new AlertDialog.Builder(activity);
-
-        alert.setTitle("Tingtel Response");
-        alert.setMessage(response);
-
-
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-                dialog.dismiss();
-
-
-            }
-        });
-
-
-        alert.show();
-
-
-    }
-
 
     private final static String simSlotName[] = {
             "extra_asus_dial_use_dualsim",
@@ -318,19 +186,13 @@ public class Methods {
     };
 
 
-
-
-
     public void checkSimCards(Context appContext) {
     }
 
 
     public String[] DetectSimCards(Activity activity) {
-
         sharedPreferences = activity.getSharedPreferences("TingTelPref", 0);
         editor = sharedPreferences.edit();
-
-
 
         if (Build.VERSION.SDK_INT > 22) {
             //for dual sim mobile
@@ -341,12 +203,12 @@ public class Methods {
                 ActivityCompat.requestPermissions(activity, new String[]{READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
 //                DetectSimCards(activity);
                 String[] NetworkArray = new String[1];
-                NetworkArray[0] =  "No Sim Card Detected";
+                NetworkArray[0] = "No Sim Card Detected";
 
                 editor.putString("SIMSTATUS", "");
                 editor.putString("SIM1", "");
                 editor.putString("SIM2", "");
-                editor.commit();
+                editor.apply();
 
                 return NetworkArray;
             } else {
@@ -360,7 +222,6 @@ public class Methods {
 //                    Sim2Network = simInfo1.getDisplayName().toString();
 
                     if ((simInfo.getMcc() == 621) && (simInfo1.getMcc() == 621)) {
-
                         String[] NetworkArray = new String[2];
                         NetworkArray[0] = simInfo.getDisplayName().toString();
                         NetworkArray[1] = simInfo1.getDisplayName().toString();
@@ -376,7 +237,7 @@ public class Methods {
 
                         Toast.makeText(activity, "This app can only work with Nigerian Networks for now", Toast.LENGTH_LONG).show();
                         String[] NetworkArray = new String[1];
-                        NetworkArray[0] =  "No Sim Card Detected";
+                        NetworkArray[0] = "No Sim Card Detected";
 
                         return NetworkArray;
                     }
@@ -386,8 +247,6 @@ public class Methods {
                     //if there is 1 sim in dual sim mobile
                     List localList = localSubscriptionManager.getActiveSubscriptionInfoList();
                     SubscriptionInfo simInfo = (SubscriptionInfo) localList.get(0);
-
-
                     if (simInfo.getMcc() == 621) {
                         String[] NetworkArray = new String[1];
                         NetworkArray[0] = simInfo.getDisplayName().toString();
@@ -397,22 +256,21 @@ public class Methods {
                         Toast.makeText(activity, "This app can only work with Nigerian Networks for now", Toast.LENGTH_LONG).show();
 
                         String[] NetworkArray = new String[1];
-                        NetworkArray[0] =  "No Sim Card Detected";
+                        NetworkArray[0] = "No Sim Card Detected";
 
                         return NetworkArray;
                     }
 
-                }
-                else {
+                } else {
                     //No sim
                     String[] NetworkArray = new String[1];
-                    NetworkArray[0] =  "No Sim Card Detected";
+                    NetworkArray[0] = "No Sim Card Detected";
                     return NetworkArray;
                 }
 
             }
 
-        }else{
+        } else {
             //below android version 22
             TelephonyManager tManager = (TelephonyManager) activity.getBaseContext()
                     .getSystemService(Context.TELEPHONY_SERVICE);
@@ -420,17 +278,12 @@ public class Methods {
             String sim1 = tManager.getNetworkOperatorName();
 
             String[] NetworkArray = new String[1];
-            NetworkArray[0] =  sim1;
+            NetworkArray[0] = sim1;
 
             return NetworkArray;
 
         }
     }
-
-
-
-
-
 
 
     public void getCarrierOfSim(Activity activity) {
@@ -454,7 +307,7 @@ public class Methods {
                     final String iccid = subscriptionInfo.getIccId();
                     final String subscriptionInfoNumber = subscriptionInfo.getNumber();
 
-                  //  Toast.makeText(activity, "" + mnc + mcc, Toast.LENGTH_SHORT).show();
+                    //  Toast.makeText(activity, "" + mnc + mcc, Toast.LENGTH_SHORT).show();
 
                     if (mcc == 621) {
                         carrierNameList.add(carrierName);
@@ -463,9 +316,9 @@ public class Methods {
                         editor.putString("SIM" + Simno + "ICCID", iccid);
                         editor.putInt("Simno", Simno);
                         editor.commit();
-                      //  Toast.makeText(activity, "mnc is true" + Simno, Toast.LENGTH_SHORT).show();
-                         }
-                 //   Toast.makeText(activity, "mnc is false", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "SIM" + Simno + "NAME" + displayName.toString() + Simno, Toast.LENGTH_SHORT).show();
+                    }
+                    //   Toast.makeText(activity, "mnc is false", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -478,10 +331,9 @@ public class Methods {
                 } else if (Simno == 2) {
                     editor.putString(SimStatus, "SIM1SIM2");
                 }
-                    editor.commit();
+                editor.commit();
 
-         //       Toast.makeText(activity, "" + Simno, Toast.LENGTH_SHORT).show();
-
+                //       Toast.makeText(activity, "" + Simno, Toast.LENGTH_SHORT).show();
 
 
 //                if (activeSubscriptionInfoList.size() == 0 ){
@@ -510,20 +362,7 @@ public class Methods {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void SaveAirtimeOrData(final Context context, final float amount, final String simiccid, final String simName, final String message, final int banklogo, final String serviceType){
+    public void SaveAirtimeOrData(final Context context, final float amount, final String simiccid, final String simName, final String message, final int banklogo, final String serviceType) {
         class SaveTask extends AsyncTask<Void, Void, Void> {
 
             @Override
@@ -541,7 +380,6 @@ public class Methods {
                 balance.setBalance(amount);
                 balance.setDate(queryDate);
                 balance.setMessage(message);
-
 
 
                 //adding to database
@@ -563,12 +401,8 @@ public class Methods {
     }
 
 
-
-
-
-
     //capitalize all words
-    public String capitalizer(String word){
+    public String capitalizer(String word) {
 
         String[] words = word.split(" ");
         StringBuilder sb = new StringBuilder();
@@ -579,10 +413,9 @@ public class Methods {
                 sb.append(Character.toUpperCase(words[i].charAt(0)) + words[i].subSequence(1, words[i].length()).toString().toLowerCase());
             }
         }
-        return  sb.toString();
+        return sb.toString();
 
     }
-
 
 
 }

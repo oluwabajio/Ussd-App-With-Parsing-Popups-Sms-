@@ -213,8 +213,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equalsIgnoreCase("SmsMessage")) {
-
-                //   Toast.makeText(MainActivity.this, "hhhh", Toast.LENGTH_SHORT).show();
                 final String message = intent.getStringExtra("message");
                 final String senderNum = intent.getStringExtra("senderNum");
 
@@ -231,14 +229,12 @@ public class MainActivity extends AppCompatActivity {
 //                if (senderNum.equalsIgnoreCase("131") || senderNum.equalsIgnoreCase("mtn n")){
 //                    return;
 //                }
-
-
                 //Airtel Data Balance
                 if ((senderNum.equalsIgnoreCase("Glo")) && (message.toLowerCase().contains(""))) {
 
                     servicename = "Data Balance";
-                    simname = "9mobile";
-                    serviceLogo = R.drawable.airtel_logo;
+                    simname = "Glo";
+                    serviceLogo = R.drawable.glo_logo;
 
                     Log.e("logmessage", "supposed to receive here");
                     Log.e("logmessage", message);
@@ -247,17 +243,16 @@ public class MainActivity extends AppCompatActivity {
                     //    CheckSender(senderNum, message);
 
 
-                } else if ((senderNum.equalsIgnoreCase("9mobile")) && ((message.toLowerCase().contains("your data balance as at")) || (message.toLowerCase().contains("you have")) || (message.toLowerCase().contains("your monthly data")) || (message.toLowerCase().contains("valid till")))) {
-
-                    //   Toast.makeText(MainActivity.this, "bbbbn" + message, Toast.LENGTH_SHORT).show();
+                } else if ((senderNum.equalsIgnoreCase("9mobile"))
+                        && ((message.toLowerCase().contains("your data balance as at"))
+                        || (message.toLowerCase().contains("you have"))
+                        || (message.toLowerCase().contains("your monthly data"))
+                        || (message.toLowerCase().contains("valid till")))) {
                     servicename = "Data Balance";
                     simname = "9Mobile";
                     serviceLogo = R.drawable.nmobile_logo;
 
                     ServiceType = "Data";
-
-                    //  Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-
 
                     Pattern pattern = Pattern.compile("\\d+[Mm][Bb]");
                     Matcher matcher = pattern.matcher(message);
@@ -677,40 +672,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateBalance(String balance) {
         String clickedItem = globalVariable.getClickedItem();
-
         FragmentManager fm = getSupportFragmentManager();
         MainFragment fragment = (MainFragment) fm.findFragmentById(R.id.frame_container);
 
-
         if (clickedItem.equalsIgnoreCase("Sim1Airtime")) {
             balanceViewModel.setCurrentAirtimeBalanceSim1(balance);
-
             //fragment.changeSim1AirtimeTextView(balance);
-
         } else if (clickedItem.equalsIgnoreCase("Sim2Airtime")) {
-
+            balanceViewModel.setCurrentAirtimeBalanceSim2(balance);
             fragment.changeSim2AirtimeTextView(balance);
 
         } else if (clickedItem.equalsIgnoreCase("Sim1Data")) {
-
+            balanceViewModel.setCurrentDataBalanceSim1(balance);
             fragment.changeSim1DataTextView(balance);
 
         } else if (clickedItem.equalsIgnoreCase("Sim2Data")) {
-
+            balanceViewModel.setCurrentDataBalanceSim2(balance);
             fragment.changeSim2DataTextView(balance);
         } else {
-            fragment.changeSim2DataTextView(balance);
+            fragment.changeSim2DataTextView("?");
             //       Toast.makeText(MainActivity.this, "This is else", Toast.LENGTH_SHORT).show();
         }
-
-        //   Toast.makeText(MainActivity.this, "Click1" + globalVariable.getClickedItem() + globalVariable.getUssdservice() + balance, Toast.LENGTH_SHORT).show();
-
         globalVariable.setClickedItem("");
     }
 
 
     private void ShowAirtimeNotification() {
-
         //very important to create a notification channel in android 8 and above
         CreateNotificationChannel();
 

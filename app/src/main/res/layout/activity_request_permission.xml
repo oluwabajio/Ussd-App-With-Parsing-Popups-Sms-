@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RequestPermissionActivity"
-    xmlns:fancy="http://schemas.android.com/apk/res-auto">
+    tools:context=".RequestPermissionActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -41,19 +41,19 @@
             android:text="Permission Required"
             android:textAlignment="center"
             android:textColor="@color/colorLight"
-            android:textSize="@dimen/_20sdp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
             app:layout_constraintTop_toTopOf="parent" />
 
-<ImageView
-    app:layout_constraintTop_toBottomOf="@+id/textView"
-    android:layout_marginTop="@dimen/_42sdp"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    android:src="@drawable/permission"/>
+        <ImageView
+            android:layout_width="241dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="@dimen/_42sdp"
+            android:src="@drawable/permission"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 
         <mehdi.sakout.fancybuttons.FancyButton

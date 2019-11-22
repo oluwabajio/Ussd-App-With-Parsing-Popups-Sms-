@@ -57,7 +57,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class MainFragment extends Fragment {
 
-    TextView tvSim1Airtime, tvSim2Airtime, tvSim1Data, tvSim2Data, tvSim1Network, tvSim2Network;
+    TextView tvSim1Airtime, tvSim2Airtime, tvSim1Data, tvSim2Data;
     ImageView refSim1Airtime, refSim2Airtime, refSim1Data, refSim2Data;
     LinearLayout Sim1Layout, Sim2Layout;
     private CircleImageView networkLogoSim1, networkLogoSim2;
@@ -102,9 +102,6 @@ public class MainFragment extends Fragment {
 
         initObjects(view);
         initViews(view);
-
-        //  populateViews(view);
-
         getSimcardDetails();
         loadExistingValues();
 
@@ -198,8 +195,8 @@ public class MainFragment extends Fragment {
         methodsClass.getCarrierOfSim(Objects.requireNonNull(getActivity()));
 
         String NoOfSIm = sharedPreferences.getString(SimStatus, "");
-        String Sim1Network = sharedPreferences.getString("SIM1NAME", "");
-        String Sim2Network = sharedPreferences.getString("SIM2NAME", "");
+        String sim1NetworkName = sharedPreferences.getString("SIM1NAME", "");
+        String sim2NetworkName = sharedPreferences.getString("SIM2NAME", "");
 
         //  Toast.makeText(getActivity(), "fall "+ Sim1Network + Sim2Network + NoOfSIm, Toast.LENGTH_SHORT).show();
 
@@ -207,63 +204,63 @@ public class MainFragment extends Fragment {
 
 
         } else if (NoOfSIm.equalsIgnoreCase("SIM1")) {
-            switch (Sim1Network) {
-                case "MTN NG":
-                    networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.mtn_logo));
-                    break;
-                case "Airtel NG":
-                    networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.airtel_logo));
-                    break;
-            }
+            setAppropriateNetworkLogo(sim1NetworkName,null);
             Sim1Layout.setVisibility(View.VISIBLE);
             Sim2Layout.setVisibility(View.GONE);
-            //tvSim1Network.setText(Sim1Network);
-
         } else if (NoOfSIm.equalsIgnoreCase("SIM1SIM2")) {
-
-
-            switch (Sim1Network) {
-                case "MTN NG":
-                    networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.mtn_logo));
-                    break;
-                case "Airtel NG":
-                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.airtel_logo));
-                    break;
-                case "9mobile":
-                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
-                    break;
-                case "Etisalat":
-                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
-                    break;
-                case "Glo Ng":
-                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.glo_logo));
-                    break;
-            }
-            switch (Sim2Network) {
-                case "MTN NG":
-                    networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.mtn_logo));
-                    break;
-                case "Airtel NG":
-                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.airtel_logo));
-                    break;
-                case "9mobile":
-                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
-                    break;
-                case "Etisalat":
-                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
-                    break;
-                case "Glo Ng":
-                    networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.glo_logo));
-                    break;
-            }
+            setAppropriateNetworkLogo(sim1NetworkName, sim2NetworkName);
             Sim1Layout.setVisibility(View.VISIBLE);
             Sim2Layout.setVisibility(View.VISIBLE);
-            //tvSim1Network.setText(Sim1Network);
-            //tvSim2Network.setText(Sim2Network);
-
         }
+    }
 
-
+    private void setAppropriateNetworkLogo(String sim1NetworkName, String sim2NetworkName) {
+        switch (sim1NetworkName) {
+            case "MTN NG":
+                networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.mtn_logo));
+                break;
+            case "MTN-NG":
+                networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.mtn_logo));
+                break;
+            case "AirtelNG":
+                networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.airtel_logo));
+                break;
+            case "Airtel NG":
+                networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.airtel_logo));
+                break;
+            case "9mobile":
+                networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
+                break;
+            case "Etisalat":
+                networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
+                break;
+            case "Glo Ng":
+                networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.glo_logo));
+                break;
+            case "Glo-Ng":
+                networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.glo_logo));
+                break;
+        }
+        switch (sim2NetworkName) {
+            case "MTN-NG":
+                networkLogoSim1.setImageDrawable(getResources().getDrawable(R.drawable.mtn_logo));
+                break;
+            case "Airtel NG":
+                networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.airtel_logo));
+                break;
+            case "9mobile":
+                networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
+                break;
+            case "9-mobile":
+                networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
+                break;
+            case "Etisalat":
+                networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.nmobile_logo));
+                break;
+            case "Glo Ng":
+                networkLogoSim2.setImageDrawable(getResources().getDrawable(R.drawable.glo_logo));
+                break;
+        }
     }
 
     private void initObjects(View view) {
@@ -662,12 +659,7 @@ public class MainFragment extends Fragment {
                         globalVariable.setIccid(SimIccid);
                         Toast.makeText(getActivity(), "ussdservice" + ussdservice, Toast.LENGTH_SHORT).show();
                         methodsClass.DialUssdCodeNewApi(getActivity(), ussd, getActivity(), sim, ussdservice, networklogo);
-
-
                     } else {
-                        //  Toast.makeText(getActivity(), "Run Usssd =" + ussd, Toast.LENGTH_SHORT).show();
-
-
                         methodsClass.DialUssdCode(getActivity(), ussd, getActivity(), sim);
                         globalVariable.setUssdservice(ussdservice);
                         globalVariable.setIccid(SimIccid);
@@ -681,8 +673,6 @@ public class MainFragment extends Fragment {
 
 
     private void requestData(int sim, String SimName, String SimIccid) {
-
-
         //check if android version is below android o
         if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.O) {
             //check Accessibility Service Status whether enable or not
@@ -692,16 +682,12 @@ public class MainFragment extends Fragment {
             }
 
         }
-
-        //  Toast.makeText(getActivity(), "step 1", Toast.LENGTH_SHORT).show();
-
         int networklogo;
         String ussdservice;
         int NoOfSim = sharedPreferences.getInt("Simno", 0);
 
         String Sim1Iccid = sharedPreferences.getString("SIM1ICCID", "");
         String Sim2Iccid = sharedPreferences.getString("SIM2ICCID", "");
-
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED
@@ -712,21 +698,14 @@ public class MainFragment extends Fragment {
 
             Toast.makeText(getActivity(), "ask permission", Toast.LENGTH_SHORT).show();
         } else {
-
-            //    Toast.makeText(getActivity(), "dont ask permission", Toast.LENGTH_SHORT).show();
-
             if (SimName.equalsIgnoreCase("")
                     || (Sim1Iccid.equalsIgnoreCase(""))) {
 
                 Toast.makeText(getActivity(), "No Sim Card Detected", Toast.LENGTH_SHORT).show();
 
             } else {
-
                 String ussd;
                 String Network = SimName;
-
-                //   Toast.makeText(getActivity(), SimName, Toast.LENGTH_SHORT).show();
-
                 if (Network.toLowerCase().contains("9mobile") || Network.toLowerCase().contains("etisalat")) {
                     ussd = "*228#";
                     networklogo = R.drawable.nmobile_logo;
@@ -747,7 +726,6 @@ public class MainFragment extends Fragment {
                     ussd = null;
                     networklogo = R.drawable.airtel_logo;
                     ussdservice = "";
-                    // Toast.makeText(getActivity(), "else else", Toast.LENGTH_SHORT).show();
                 }
                 if (!(ussd == null)) {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -831,23 +809,14 @@ public class MainFragment extends Fragment {
 
     //method to enable accessibility service
     private void enableAccessibilityService() {
-
-
         // load the customized_dialog.xml layout and inflate to view
         LayoutInflater layoutinflater = LayoutInflater.from(getContext());
         View customizedUserView = layoutinflater.inflate(R.layout.customized_dialog, null);
-
-
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-
         alert.setView(customizedUserView);
-
-
         alert.setTitle("Tingtel");
         // alert.setMessage("Hello, We need you to enable accessibility settings for this app, so the app can read your ussd response popups and allow us serve you better");
-
         alert.setMessage("To Use Tingtel USSD App, Please Enable Accessibility Service in Settings");
-
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Canceled.
@@ -855,22 +824,13 @@ public class MainFragment extends Fragment {
 
             }
         });
-
         alert.setPositiveButton("Go To Settings", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-
-
                 Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                 startActivity(intent);
-
-
             }
         });
-
-
         alert.show();
-
-
         return;
 
     }
@@ -901,10 +861,7 @@ public class MainFragment extends Fragment {
         checkBalanceSim2Intent.putExtra("update_sim2_airtime", "update_sim2_airtime");
         PendingIntent psim2 = PendingIntent.getActivity(getActivity(), 0, checkBalanceSim2Intent, 0);
 
-
         updateNotificationTextViews();
-
-
         notificationlayout.setOnClickPendingIntent(R.id.btnSim1Airtime, psim1);
 
         notificationlayout.setOnClickPendingIntent(R.id.btnSim2Airtime, psim2);
@@ -924,7 +881,6 @@ public class MainFragment extends Fragment {
     }
 
     public void updateNotificationTextViews() {
-
         final String Sim1Iccid = sharedPreferences.getString("SIM1ICCID", "");
         final String Sim2Iccid = sharedPreferences.getString("SIM2ICCID", "");
 

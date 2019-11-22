@@ -28,6 +28,20 @@
         tools:context=".TransferAirtimeActivity"
         tools:showIn="@layout/activity_transfer_airtime">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="138dp"
+            android:layout_marginLeft="138dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="138dp"
+            android:layout_marginRight="138dp"
+            android:layout_marginBottom="11dp"
+            android:text="Select network carrier"
+            app:layout_constraintBottom_toTopOf="@+id/radioGroup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <RadioGroup
             android:id="@+id/radioGroup"
@@ -59,6 +73,7 @@
                 android:layout_weight="0.13"
                 android:checked="false"
                 android:text="Sim 2"
+                android:textColor="@color/tingtel_bg_color"
                 android:textSize="15dp" />
         </RadioGroup>
 
@@ -78,6 +93,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Enter Amount"
+            android:textColorHint="@color/cardview_dark_background"
             android:inputType="number"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -88,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.1" />
+            app:layout_constraintGuide_begin="41dp" />
 
         <TextView
             android:id="@+id/tvPhone"
@@ -105,6 +121,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Enter Phone Number"
+            android:textColorHint="@color/cardview_dark_background"
             android:inputType="number"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -116,6 +133,7 @@
             android:layout_height="wrap_content"
             android:text="Choose Beneficiary"
             android:textColor="@color/colorPrimary"
+            android:textSize="17sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toBottomOf="@+id/ed_phone_number" />
@@ -136,6 +154,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Enter PIN"
+            android:textColorHint="@color/cardview_dark_background"
             android:inputType="numberPassword"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
