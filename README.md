@@ -6,4 +6,6 @@ Android app for checking airtime and data balance. it calls uss for android vers
 Features
 - Auto detect sim iccid, mnc and mcc
 - Auto detect sim network.
-- Runs ussd and gets results via accessibility service
+- Runs ussd and gets results by reading popups via accessibility service and reading sms mmessages.
+- saves ussd results to room database.
+- uses liveData to persist data
